@@ -122,26 +122,26 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .game-note{text-align:center;color:var(--ink-soft);margin-top:16px;font-weight:600}
 .game-note b{color:var(--ink)}
 
-/* ============ GAME EXPLORER — the screen stays with you ============ */
-.explorer{margin-top:30px}
-.mini-wrap{position:sticky;top:80px;z-index:6;max-width:700px;margin:0 auto}
-.mini-bezel{position:relative;background:var(--ink);border:var(--border);border-radius:24px;padding:11px;box-shadow:var(--shadow)}
-.mini-bezel canvas{width:100%;height:auto;display:block;border-radius:14px;background:#0B1428}
-.mini-led{position:absolute;right:22px;bottom:16px;width:9px;height:9px;border-radius:50%;background:var(--grass);box-shadow:0 0 8px var(--grass)}
-.mini-stand{width:130px;height:15px;background:var(--ink);margin:0 auto;border-radius:0 0 14px 14px}
-.mini-wrap .game-note{margin-top:12px;background:rgba(255,248,236,.88);border-radius:12px;padding:4px 10px}
-.age-group{margin-top:38px}
-.age-title{display:flex;align-items:center;gap:12px;font-weight:900;font-size:1.3rem}
-.age-title .tag{display:inline-block;font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:.3em .85em;border:2px solid var(--ink)}
-.age-title .line{flex:1;height:3px;background:var(--ink);border-radius:2px;opacity:.14}
-.game-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:14px;margin-top:16px}
+/* ============ GAMES — one sticky computer, age tabs, per-age list ============ */
+.games-layout{display:grid;grid-template-columns:1.18fr .86fr;gap:38px;align-items:start}
+.stage-sticky{position:sticky;top:94px}
+.stage-sticky .game-note{margin-top:14px}
+.age-tabs{display:flex;gap:10px}
+.age-tab{flex:1;font-family:var(--font);font-weight:900;font-size:1.03rem;padding:.78em .3em;border-radius:999px;border:var(--border);background:#fff;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .13s,background .13s,color .13s}
+.age-tab:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.age-tab.on{background:var(--ink);color:#fff}
+.age-sub{margin-top:16px;color:var(--ink-soft);font-weight:700;font-size:1.02rem}
+.game-list{display:grid;gap:12px;margin-top:14px}
 .gcard{text-align:left;background:#fff;border:var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:16px 18px;cursor:pointer;font-family:var(--font);color:var(--ink);transition:transform .13s,background .13s;display:block;width:100%}
 .gcard:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
 .gcard h4{font-size:1.06rem;margin-bottom:3px}
 .gcard p{color:var(--ink-soft);font-size:.93rem;font-weight:600;line-height:1.45}
 .gcard.on{background:var(--sun)}
-@media(max-width:520px){.mini-wrap{top:70px}.game-cards{grid-template-columns:1fr 1fr;gap:10px}.gcard{padding:12px 13px}.gcard p{font-size:.85rem}}
-
+@media(max-width:900px){
+  .games-layout{grid-template-columns:1fr;gap:22px}
+  .stage-sticky{top:66px;z-index:30}
+  .age-tab{font-size:.95rem}
+}
 /* learn shelf */
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .chip{display:inline-flex;align-items:center;gap:.45em;background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:.42em 1em;font-weight:700;font-size:.95rem;box-shadow:3px 3px 0 var(--ink);transition:transform .15s}
@@ -326,20 +326,23 @@ section .wrap{position:relative;z-index:2}
       <h2>Games your kid can't get anywhere else</h2>
       <p class="lede" style="margin:0 auto">Original 3D games, made only for YoyliOS. No ads, no purchases, no "watch this to continue". Pick one — it's playing on the family computer.</p>
     </div>
-    <div class="stage rv" id="deskStage">
-      <canvas class="webgl" id="deskCanvas" aria-label="A family computer with YoyliOS games playing on the screen"></canvas>
-      <div class="fallback"><img src="https://yoyli.com/img/g/store-en-1400.webp" alt="Yoyli Games storefront"></div>
-    </div>
-    <div class="explorer" id="explorer">
-      <div class="mini-wrap">
-        <div class="mini-bezel">
-          <canvas id="miniScreen" width="1024" height="576" aria-label="The game now playing, live"></canvas>
-          <span class="mini-led"></span>
+    <div class="games-layout">
+      <div class="stage-sticky">
+        <div class="stage rv" id="deskStage">
+          <canvas class="webgl" id="deskCanvas" aria-label="A family computer with YoyliOS games playing on the screen"></canvas>
+          <div class="fallback"><img src="https://yoyli.com/img/g/store-en-1400.webp" alt="Yoyli Games storefront"></div>
         </div>
-        <div class="mini-stand"></div>
         <p class="game-note" id="gameNote"></p>
       </div>
-      <div id="ageGroups"></div>
+      <div class="games-side">
+        <div class="age-tabs" role="tablist" aria-label="Games by age">
+          <button type="button" class="age-tab" data-g="0">Ages 2–4</button>
+          <button type="button" class="age-tab on" data-g="1">Ages 5–8</button>
+          <button type="button" class="age-tab" data-g="2">Ages 9–12</button>
+        </div>
+        <p class="age-sub" id="ageSub"></p>
+        <div class="game-list" id="gameList"></div>
+      </div>
     </div>
 
     <div class="rv">
@@ -553,8 +556,8 @@ const GAMES = [
   {n:"Animal Surprise",  age:"2–4", img:"animal-surprise", d:"Tap a bush and a friendly animal pops out and says its name."},
   {n:"Galaxy Math Racer",age:"5+",  img:"galaxy-racer",    d:"Steer through the right answer gate and race among the stars."},
   {n:"Letters Adventure",age:"5+",  img:"letters-adventure",d:"Jump between floating islands to collect the right letter."},
-  {n:"Robo Code",        age:"5+",  img:"robo-code",       d:"Program a robot with arrows and loops to reach the goal."},
-  {n:"Time Rescue",      age:"5+",  img:"time-rescue",     d:"Set the clock hands to save the day in a storybook town."},
+  {n:"Robo Code",        age:"9–12", img:"robo-code",       d:"Program a robot with arrows and loops to reach the goal."},
+  {n:"Time Rescue",      age:"9–12", img:"time-rescue",     d:"Set the clock hands to save the day in a storybook town."},
   {n:"Star Pop",         age:"5+",  img:"star-pop",        d:"A space shooter for counting: one press, one shot, one pop."},
   {n:"Fishing Lake",     age:"5+",  img:"fishing-lake",    d:"Cast, wait and reel in. A calm game of timing and coordination."}
 ];
@@ -571,46 +574,44 @@ const IMG = s => "https://yoyli.com/img/g/" + s + ".webp";
 /* learn chips */
 document.getElementById("learnChips").innerHTML = LEARN.map(n => `<span class="chip"><i></i>${n}</span>`).join("");
 
-/* game explorer: age-grouped cards; the sticky monitor above always shows the game */
+/* games: three age tabs; each tab lists only its games; the one computer above plays them */
+const AGE_GROUPS = [
+  {sub: "First games — no reading, no losing. Every tap answers.", games: [0, 1, 2, 3]},
+  {sub: "Real games — math races, letters, stars, fishing and more.", games: [4, 5, 8, 9]},
+  {sub: "For the big kids — code quests and time-travel strategy.", games: [6, 7]},
+];
 const note = document.getElementById("gameNote");
-const groupsHost = document.getElementById("ageGroups");
-const cards = [];
-[["2–4", "First games · no reading, no losing", "#E3F2FD", 0, 4], ["5+", "Real games · math, letters, code and quests", "#FFF1D6", 4, 10]].forEach(([age, sub, color, from, to]) => {
-  const wrap = document.createElement("div");
-  wrap.className = "age-group rv";
-  wrap.innerHTML = `<div class="age-title"><span class="tag" style="background:${color}">Ages ${age}</span> ${sub} <span class="line"></span></div>`;
-  const grid = document.createElement("div");
-  grid.className = "game-cards";
-  GAMES.slice(from, to).forEach((g, k) => {
-    const i = from + k;
+const ageSub = document.getElementById("ageSub");
+const gameList = document.getElementById("gameList");
+const ageTabs = [...document.querySelectorAll(".age-tab")];
+let cards = {};
+function renderGroup(g) {
+  ageTabs.forEach((t, j) => t.classList.toggle("on", j === g));
+  ageSub.textContent = AGE_GROUPS[g].sub;
+  gameList.innerHTML = ""; cards = {};
+  AGE_GROUPS[g].games.forEach(i => {
+    const gm = GAMES[i];
     const b = document.createElement("button");
     b.type = "button"; b.className = "gcard";
-    b.innerHTML = `<h4>${g.n}</h4><p>${g.d}</p>`;
+    b.innerHTML = `<h4>${gm.n}</h4><p>${gm.d}</p>`;
     b.addEventListener("click", () => { if (window.__deskGoTo) window.__deskGoTo(i); syncPicker(i); });
-    grid.appendChild(b); cards.push(b);
+    gameList.appendChild(b); cards[i] = b;
   });
-  wrap.appendChild(grid);
-  groupsHost.appendChild(wrap);
-});
-function syncPicker(i){
-  cards.forEach((b, j) => b.classList.toggle("on", j === i));
+}
+function syncPicker(i) {
+  Object.entries(cards).forEach(([j, b]) => b.classList.toggle("on", +j === i));
   const g = GAMES[i];
   note.innerHTML = `Now playing: <b>${g.n}</b> · Ages ${g.age} — ${g.d}`;
 }
+ageTabs.forEach((t, g) => t.addEventListener("click", () => {
+  renderGroup(g);
+  const first = AGE_GROUPS[g].games[0];
+  if (window.__deskGoTo) window.__deskGoTo(first);
+  syncPicker(first);
+}));
+renderGroup(1);
 syncPicker(4);
 window.__syncPicker = syncPicker;
-
-/* the sticky mini monitor mirrors the desk screen, live */
-(() => {
-  const mini = document.getElementById("miniScreen");
-  const mx = mini.getContext("2d");
-  let miniVis = false;
-  new IntersectionObserver(es => es.forEach(e => miniVis = e.isIntersecting), {threshold: .05}).observe(mini);
-  (function feed() {
-    requestAnimationFrame(feed);
-    if (miniVis && window.__deskScreenCanvas) mx.drawImage(window.__deskScreenCanvas, 0, 0, 1024, 576);
-  })();
-})();
 
 /* scroll progress */
 (() => {
@@ -969,7 +970,7 @@ async function initDesk() {
   const fitted = imgs.map(im => makeFitted(im, 1024, 576));
   let cur = 4, nxt = 4, slideT = 1, lastSwitch = performance.now();
   const bubbles = Array.from({length: 16}, () => ({x: Math.random() * 1024, y: Math.random() * 576, r: 6 + Math.random() * 16, s: .25 + Math.random() * .6, w: Math.random() * 6.28}));
-  function goTo(i) { if (i !== cur && slideT >= 1) { nxt = i; slideT = 0; lastSwitch = performance.now(); } }
+  function goTo(i) { if (slideT < 1) { cur = nxt; slideT = 1; } if (i !== cur) { nxt = i; slideT = 0; lastSwitch = performance.now(); } }
   window.__deskGoTo = goTo;
   function drawScreen(now, dt) {
     const W = 1024, H = 576;
@@ -1046,8 +1047,10 @@ async function initDesk() {
   const fanTex = new THREE.CanvasTexture(fc);
   const fans = [];
   [[.62, 0x2F9BE8], [1.42, 0xFF6B57]].forEach(([y, col]) => {
-    const f = new THREE.Mesh(new THREE.CircleGeometry(.34, 32), new THREE.MeshBasicMaterial({map: fanTex, transparent: true, color: col}));
-    f.position.set(0, y, .012); gut.add(f); fans.push(f);
+    const fg = new THREE.Group(); fg.position.set(0, y, .012); gut.add(fg);
+    fg.add(new THREE.Mesh(new THREE.TorusGeometry(.31, .034, 12, 44), new THREE.MeshBasicMaterial({color: col})));
+    const f = new THREE.Mesh(new THREE.CircleGeometry(.30, 32), new THREE.MeshBasicMaterial({map: fanTex, transparent: true, color: col}));
+    fg.add(f); fans.push(f);
   });
   const gpu = new THREE.Mesh(RB(.7, .13, .03, .01), new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .4, metalness: .5}));
   gpu.position.set(0, .18, .012); gut.add(gpu);
@@ -1143,7 +1146,7 @@ async function initDevices() {
   const tc = document.createElement("canvas"); tc.width = 1440; tc.height = 844;
   const tx = tc.getContext("2d");
   const [homeImg, playImg] = await Promise.all([loadImg("https://yoyli.com/img/s/hero018-1200.webp"), loadImg("https://yoyli.com/img/s/animals.webp")]);
-  const tabA = makeFitted(homeImg, 1440, 844), tabB = makeFitted(playImg, 1440, 844, "saturate(1.3) contrast(1.14)");
+  const tabA = makeFitted(homeImg, 1440, 844), tabB = makeFitted(playImg, 1440, 844, "saturate(1.55) contrast(1.18)");
   const tabLabels = ["Yoyli Home · the launcher", "Little Play · Ages 2–4"];
   let tabCur = 0, tabNext = 0, tabFade = 1, tabLast = performance.now();
   const tbub = Array.from({length: 10}, () => ({x: Math.random() * 1440, y: Math.random() * 844, r: 6 + Math.random() * 14, s: .2 + Math.random() * .5, w: Math.random() * 6.28}));
@@ -1161,7 +1164,7 @@ async function initDevices() {
       tx.fillStyle = "rgba(255,255,255,.16)"; tx.fill(); tx.strokeStyle = "rgba(255,255,255,.45)"; tx.lineWidth = 2; tx.stroke();
     });
     tx.fillStyle = "rgba(18,28,52,.85)"; tx.beginPath(); tx.roundRect(30, 844 - 74, 470, 52, 26); tx.fill();
-    tx.fillStyle = "#fff"; tx.font = "800 27px Rubik, sans-serif"; tx.textAlign = "left"; tx.fillText(tabLabels[tabCur], 54, 844 - 39);
+    tx.fillStyle = "#fff"; tx.font = "800 27px Rubik, sans-serif"; tx.textAlign = "left"; tx.fillText(tabLabels[tabFade < 1 ? tabNext : tabCur], 54, 844 - 39);
   }
   const tabTex = new THREE.CanvasTexture(tc); tabTex.colorSpace = THREE.SRGBColorSpace; tabTex.anisotropy = 8;
 
@@ -1181,11 +1184,11 @@ async function initDevices() {
   const tabStand = shadowed(new THREE.Mesh(RB(2.0, .09, .85, .03), new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .5, metalness: .4})));
   tabStand.position.set(-1.3, .045, .3); tabStand.rotation.x = .32; grp.add(tabStand);
   /* S Pen resting on the table */
-  const pen = new THREE.Group(); pen.position.set(-.45, .045, 1.38); pen.rotation.y = .9; grp.add(pen);
-  const penBody = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.052, .052, 1.1, 14), new THREE.MeshStandardMaterial({color: 0xFF6B57, roughness: .35})));
+  const pen = new THREE.Group(); pen.position.set(.95, .055, 1.42); pen.rotation.y = -.65; grp.add(pen);
+  const penBody = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, 1.5, 16), new THREE.MeshStandardMaterial({color: 0xFF6B57, roughness: .35})));
   penBody.rotation.z = Math.PI / 2; pen.add(penBody);
-  const penTip = new THREE.Mesh(new THREE.ConeGeometry(.052, .13, 14), new THREE.MeshStandardMaterial({color: 0xFFF3D6, roughness: .4}));
-  penTip.rotation.z = Math.PI / 2; penTip.position.x = .58; pen.add(penTip);
+  const penTip = new THREE.Mesh(new THREE.ConeGeometry(.07, .16, 16), new THREE.MeshStandardMaterial({color: 0xFFF3D6, roughness: .4}));
+  penTip.rotation.z = Math.PI / 2; penTip.position.x = .83; pen.add(penTip);
 
   /* ---------- Galaxy S26 Ultra-class phone: boxy titanium, punch-hole, held landscape ---------- */
   const titanium = new THREE.MeshStandardMaterial({color: 0xB7BCC8, roughness: .3, metalness: .82});
