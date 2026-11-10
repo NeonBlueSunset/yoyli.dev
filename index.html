@@ -123,7 +123,7 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .game-note b{color:var(--ink)}
 
 /* ============ GAMES — one compact player: screen, age chips, swipe rail ============ */
-.player-card{max-width:800px;margin:6px auto 0;background:#fff;border:var(--border);border-radius:26px;box-shadow:var(--shadow);padding:12px 12px 8px}
+.player-card{max-width:720px;margin:6px auto 0;background:#fff;border:var(--border);border-radius:26px;box-shadow:var(--shadow);padding:12px 12px 8px}
 .player-card .stage{box-shadow:none}
 .now-line{margin-top:12px;font-weight:700;font-size:1.02rem;text-align:center}
 .now-line b{font-weight:900}
@@ -132,14 +132,15 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .age-tab.on{background:var(--ink);color:#fff}
 .rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 2px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .rail::-webkit-scrollbar{display:none}
-.thumb{flex:0 0 128px;scroll-snap-align:start;border:3px solid var(--ink);border-radius:16px;overflow:hidden;background:#fff;padding:0;cursor:pointer;font-family:var(--font);color:var(--ink);text-align:left;transition:transform .12s}
+.thumb{flex:0 0 112px;scroll-snap-align:start;border:3px solid var(--ink);border-radius:16px;overflow:hidden;background:#fff;padding:0;cursor:pointer;font-family:var(--font);color:var(--ink);text-align:left;transition:transform .12s}
 .thumb:hover{transform:translateY(-2px)}
 .thumb img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
 .thumb span{display:block;font-size:.82rem;font-weight:800;line-height:1.25;padding:7px 9px 8px}
 .thumb.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--sun)}
 .thumb.on span{background:var(--sun)}
 .rail-hint{margin:2px 4px 6px;color:var(--ink-soft);font-weight:600;font-size:.92rem;text-align:center}
-@media(min-width:901px){.thumb{flex-basis:158px}.thumb span{font-size:.9rem}}
+@media(min-width:901px){.thumb{flex-basis:148px}.thumb span{font-size:.9rem}}
+@media(max-width:900px){.player-card .stage{aspect-ratio:16/9.4}.now-line{font-size:.96rem}.age-tab{padding:.55em .3em}}
 /* learn shelf */
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .chip{display:inline-flex;align-items:center;gap:.45em;background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:.42em 1em;font-weight:700;font-size:.95rem;box-shadow:3px 3px 0 var(--ink);transition:transform .15s}
@@ -582,6 +583,7 @@ let thumbs = {};
 function renderGroup(g) {
   ageTabs.forEach((t, j) => t.classList.toggle("on", j === g));
   ageSub.textContent = AGE_GROUPS[g].sub;
+  window.__gamePool = AGE_GROUPS[g].games.slice();
   gameRail.innerHTML = ""; thumbs = {};
   AGE_GROUPS[g].games.forEach(i => {
     const gm = GAMES[i];
@@ -971,7 +973,7 @@ async function initDesk() {
   window.__deskGoTo = goTo;
   function drawScreen(now, dt) {
     const W = 1024, H = 576;
-    if (!REDUCED && now - lastSwitch > 3600 && slideT >= 1 && now > holdUntil) { nxt = (cur + 1) % GAMES.length; slideT = 0; lastSwitch = now; }
+    if (!REDUCED && now - lastSwitch > 3600 && slideT >= 1 && now > holdUntil) { const pool = window.__gamePool || GAMES.map((_, k) => k); const pi = pool.indexOf(cur); nxt = pi === -1 ? pool[0] : pool[(pi + 1) % pool.length]; if (nxt !== cur) { slideT = 0; lastSwitch = now; } }
     if (slideT < 1) {
       slideT = Math.min(1, slideT + dt / .75);
       const e = 1 - Math.pow(1 - slideT, 3), off = -e * W;
