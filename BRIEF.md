@@ -50,7 +50,21 @@ Built on three foundations, studied in full (see STUDY-chimney.md, STUDY-torim.m
   ratio, low-poly primitives, graceful static-image fallback if WebGL fails,
   respect prefers-reduced-motion.
 
-## Games section pattern (Wave, 2026-11-10 — final form after two iterations)
+## Games section pattern (Wave, 2026-11-10 — FINAL, verified live)
+- Two earlier forms were rejected by Wave (mini-monitor explorer; sticky
+  computer + plain list — "לא עפתי"). Wave's final spec, built and verified:
+  the zone UP TO the age chips stays fixed on screen (the one computer +
+  "Now playing" line + the three age chips), and below it, in the bottom
+  half of the screen, the games form a STACKING CARD DECK like the chimney
+  site's: cards pile over each other while scrolling, each leaving a colored
+  name band visible; a card carries the game's real screenshot, name, age
+  and description; tapping a card plays it on the fixed computer above.
+  A picked game HOLDS 20 seconds before the auto-carousel resumes.
+- Devices/launcher scene framing rule (Wave): pull the camera back until
+  BOTH devices are whole in frame — realistic relative sizes and a smooth
+  look beat readable screen content; tablet center-back, phone in front.
+
+## Games section pattern (Wave, 2026-11-10 — earlier iterations)
 - Wave's catch: by the time a visitor scrolls down to the game buttons, the
   desk simulation has scrolled away — they tap games but can't SEE them change.
 - First fix (a sticky mini-monitor mirroring the desk + age-grouped cards)
