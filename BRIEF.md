@@ -50,6 +50,36 @@ Built on three foundations, studied in full (see STUDY-chimney.md, STUDY-torim.m
   ratio, low-poly primitives, graceful static-image fallback if WebGL fails,
   respect prefers-reduced-motion.
 
+## V2 polish pass (Wave, 2026-11-10 — after seeing the prototype)
+- Higher quality everywhere: more polish, richer animations.
+- 3D quality: rounded geometry instead of blocky rectangles, simulation-grade
+  realism — environment lighting, soft shadows, real materials.
+- NO cropped interfaces: screenshots and in-simulation screens always show the
+  FULL interface (fit, never cover-crop). Wave caught the profile-picker shot
+  under the animations being cut — fixed by rule, everywhere.
+- Logo rebuilt as ONE lockup: David's original logo.webp is a wide robot+"Yoyli"
+  image; v1 squashed it into a square AND duplicated it with HTML text. Rule:
+  one logo only — a fresh SVG robot mark (David's cute purple robot, redrawn
+  clean in the site's toy style) + one "YoyliOS" wordmark. Never the raw
+  logo.webp in a square, never logo + repeated name beside it.
+- New section coming: a tablet, and also a smartphone, as 3D simulations
+  showing YoyliOS screens up close. (YoyliOS itself runs on PC — the section
+  presents its screens on the devices for a closer look, captioned honestly.)
+
+## Backgrounds — a kindergarten wall, all the way down (Wave, 2026-11-10)
+- The backgrounds are the kids' world: soft, innocent, user-friendly colors —
+  like a kindergarten wall painted in gouache: a forest, hills, a house, the
+  night sky. Every scroll/section brings its own drawing with it — a new cute
+  scene and new characters arrive as you go down the page.
+- Characters are ORIGINAL generic animals (fox, rabbit, owl, deer, cat,
+  hedgehog, teddy bear, duck, butterflies). NEVER copyrighted characters —
+  Wave named Winnie the Pooh only as the vibe, explicitly not to use him.
+- Each section gets a pastel wash + a hand-drawn SVG scene band (hills, trees,
+  its character) that reveals as the section scrolls into view, with gentle
+  idle motion (drifting clouds, twinkling stars, a fluttering butterfly).
+  Content always stays on top and readable; scenes are decoration, pointer-
+  events off.
+
 ## Voice
 Parent to parent. Short sentences. Specifics over slogans.
 No AI superlatives ("revolutionary", "magical experience"). If a claim can't be

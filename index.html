@@ -14,7 +14,7 @@
   --ink:#1C2B4A; --ink-soft:#3D4E73; --muted:#66738F;
   --sky:#2F9BE8; --sky-deep:#1B6FB8;
   --sun:#FFC531; --coral:#FF6B57; --coral-deep:#E04A38;
-  --grass:#2FBF8F; --berry:#7C5CD6;
+  --grass:#2FBF8F; --berry:#7C5CD6; --berry-deep:#5B21B6;
   --card:#FFFFFF;
   --border:3px solid var(--ink);
   --shadow:7px 7px 0 var(--ink);
@@ -27,6 +27,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--paper);color:var(--ink);line-height:1.55;font-size:17px;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+::selection{background:var(--sun);color:var(--ink)}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:6px}
 img{max-width:100%;display:block}
 a{color:var(--sky-deep)}
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
@@ -42,11 +44,17 @@ section{padding:72px 0}
 .btn.ghost{background:#fff;color:var(--ink)}
 .btn.sun{background:var(--sun);color:var(--ink)}
 .btn small{font-weight:600;opacity:.85;font-size:.82em}
-/* ============ HEADER ============ */
+/* scroll progress (a nod to Chimly) */
+#progress{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--sun),var(--coral));z-index:80}
+/* ============ HEADER + LOGO (one lockup: robot mark + wordmark) ============ */
 header.site{position:sticky;top:0;z-index:50;background:rgba(255,248,236,.92);backdrop-filter:blur(8px);border-bottom:var(--border)}
-header.site .wrap{display:flex;align-items:center;gap:18px;height:68px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-weight:900;font-size:1.35rem}
-.logo img{width:38px;height:38px}
+header.site .wrap{display:flex;align-items:center;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
+.logo svg{width:44px;height:44px;flex:none;filter:drop-shadow(2.5px 2.5px 0 rgba(28,43,74,.9))}
+.logo .word{font-weight:900;font-size:1.55rem;letter-spacing:-.02em;line-height:1}
+.logo .word .os{color:var(--sky-deep)}
+footer.site .logo .word{color:#fff}
+footer.site .logo .word .os{color:var(--sun)}
 nav.main{display:flex;gap:20px;margin-left:auto;font-weight:600;font-size:.98rem}
 nav.main a{color:var(--ink);text-decoration:none}
 nav.main a:hover{color:var(--sky-deep);text-decoration:underline}
@@ -63,10 +71,10 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .hero .price-line b{color:var(--coral-deep)}
 .stage{position:relative;max-width:860px;margin:34px auto 0}
 .stage canvas.webgl{width:100%;height:auto;display:block;aspect-ratio:16/10;cursor:pointer}
-.stage .fallback{display:none;border:var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.stage .fallback{display:none;border:var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;background:#fff}
 .stage.no-webgl canvas.webgl{display:none}
 .stage.no-webgl .fallback{display:block}
-.stage .tap-hint{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:.82rem;font-weight:700;border-radius:999px;padding:.4em 1.1em;white-space:nowrap}
+.stage .tap-hint{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:.82rem;font-weight:700;border-radius:999px;padding:.4em 1.1em;white-space:nowrap;z-index:3}
 .float-shape{position:absolute;z-index:1;opacity:.9}
 .fs-star{width:34px;height:34px;background:var(--sun);clip-path:polygon(50% 0,63% 37%,100% 50%,63% 63%,50% 100%,37% 63%,0 50%,37% 37%);animation:bob 5s ease-in-out infinite}
 .fs-circle{width:26px;height:26px;border-radius:50%;background:var(--sky);border:var(--border);animation:bob 6s ease-in-out infinite reverse}
@@ -90,7 +98,8 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .alt{background:#fff;border-top:var(--border);border-bottom:var(--border)}
 .sec-head{max-width:720px;margin-bottom:34px}
 .sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
-.toy{background:var(--card);border:var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.toy{background:var(--card);border:var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s}
+.toy.hoverable:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--ink)}
 /* games picker */
 .picker{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:22px auto 0;max-width:940px}
 .picker button{font-family:var(--font);font-weight:700;font-size:.95rem;min-height:46px;padding:.5em 1.05em;border-radius:999px;border:var(--border);background:#fff;color:var(--ink);cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .12s,background .12s}
@@ -101,13 +110,15 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .game-note b{color:var(--ink)}
 /* learn shelf */
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
-.chip{display:inline-flex;align-items:center;gap:.45em;background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:.42em 1em;font-weight:700;font-size:.95rem;box-shadow:3px 3px 0 var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:.45em;background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:.42em 1em;font-weight:700;font-size:.95rem;box-shadow:3px 3px 0 var(--ink);transition:transform .15s}
+.chip:hover{transform:translateY(-3px) rotate(-1deg)}
 .chip i{width:10px;height:10px;border-radius:50%;background:var(--sky);flex:none}
 .chip:nth-child(3n) i{background:var(--coral)} .chip:nth-child(4n) i{background:var(--grass)} .chip:nth-child(5n) i{background:var(--berry)} .chip:nth-child(7n) i{background:var(--sun)}
+/* screenshots: FULL interface, never cropped */
 .shots{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:30px}
-.shots figure{overflow:hidden}
-.shots img{width:100%;height:100%;object-fit:cover}
-.shots figcaption{padding:12px 16px;font-weight:700;background:#fff;border-top:var(--border)}
+.shots figure{overflow:hidden;display:flex;flex-direction:column}
+.shots img{width:100%;height:auto;background:var(--paper)}
+.shots figcaption{padding:12px 16px;font-weight:700;background:#fff;border-top:var(--border);margin-top:auto}
 @media(max-width:700px){.shots{grid-template-columns:1fr}}
 /* parents */
 .ctrl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:26px}
@@ -120,7 +131,7 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .robo-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
 @media(max-width:860px){.robo-grid{grid-template-columns:1fr}}
 .robo-grid figure{overflow:hidden}
-.robo-grid img{width:100%}
+.robo-grid img{width:100%;height:auto}
 .honest{display:flex;gap:12px;background:var(--paper2);border:2.5px dashed var(--ink);border-radius:var(--r-md);padding:14px 16px;margin-top:18px;font-weight:600}
 .honest .ic{font-size:1.3rem;line-height:1}
 /* steps */
@@ -168,23 +179,67 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
 /* reveal */
 .rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
 .rv.in{opacity:1;transform:none}
+/* ============ KINDERGARTEN-WALL BACKGROUNDS ============ */
+section,.hero{position:relative}
+section .wrap{position:relative;z-index:2}
+.has-scene{padding-bottom:190px}
+#games{background:#E9F7EC}
+#parents{background:#FFF2DF}
+#robo{background:#F1ECFF}
+#screens{background:#E8F5FD}
+#how{background:#FFF7DE}
+#limits{background:#FFF0F2}
+#price{background:linear-gradient(180deg,#FFF8EC,#FFEFD2)}
+#faq{background:#EFF9F0}
+.scene{position:absolute;left:0;right:0;bottom:0;height:215px;z-index:0;pointer-events:none;opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s ease}
+.scene.in{opacity:1;transform:none}
+.scene svg{width:100%;height:100%;display:block}
+.tb{transform-box:fill-box;transform-origin:center}
+.drift{animation:drift 7s ease-in-out infinite alternate}
+.drift2{animation-duration:11s;animation-delay:-4s}
+@keyframes drift{from{transform:translateX(-16px)}to{transform:translateX(16px)}}
+.twinkle{animation:tw 2.8s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.3}50%{opacity:1}}
+.flutter{animation:fl 5s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translate(0,0) rotate(-4deg)}50%{transform:translate(14px,-15px) rotate(6deg)}}
+.rise{animation:rise 6s ease-in-out infinite}
+@keyframes rise{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+.bee-path{stroke-dasharray:5 7;animation:dash 1.1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
-  .rv{opacity:1;transform:none;transition:none}
+  .rv,.scene{opacity:1;transform:none;transition:none}
   .marquee .track{animation:none}
-  .float-shape{animation:none}
+  .float-shape,.drift,.twinkle,.flutter,.rise,.bee-path{animation:none}
 }
 </style>
 </head>
 <body>
+<div id="progress"></div>
 
 <header class="site">
   <div class="wrap">
-    <a class="logo" href="#top"><img src="https://yoyli.com/img/logo.webp" alt="YoyliOS logo">YoyliOS</a>
+    <a class="logo" href="#top" aria-label="YoyliOS home">
+      <svg viewBox="0 0 120 120" role="img" aria-label="Yoyli robot">
+        <defs><linearGradient id="robotGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9D6BFF"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs>
+        <line x1="60" y1="16" x2="60" y2="32" stroke="#1C2B4A" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="60" cy="12" r="8" fill="#FFC531" stroke="#1C2B4A" stroke-width="4"/>
+        <rect x="4" y="58" width="15" height="25" rx="7.5" fill="#2F9BE8" stroke="#1C2B4A" stroke-width="4"/>
+        <rect x="101" y="58" width="15" height="25" rx="7.5" fill="#2F9BE8" stroke="#1C2B4A" stroke-width="4"/>
+        <rect x="18" y="30" width="84" height="70" rx="27" fill="url(#robotGrad)" stroke="#1C2B4A" stroke-width="5"/>
+        <rect x="30" y="43" width="60" height="45" rx="19" fill="#F3EEFF"/>
+        <circle cx="48" cy="61" r="6.5" fill="#1C2B4A"/><circle cx="72" cy="61" r="6.5" fill="#1C2B4A"/>
+        <circle cx="45.8" cy="58.8" r="2.2" fill="#fff"/><circle cx="69.8" cy="58.8" r="2.2" fill="#fff"/>
+        <path d="M51 73 Q60 81 69 73" stroke="#1C2B4A" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <ellipse cx="37" cy="71" rx="4" ry="2.6" fill="#FF9DB0" opacity=".85"/><ellipse cx="83" cy="71" rx="4" ry="2.6" fill="#FF9DB0" opacity=".85"/>
+      </svg>
+      <span class="word">Yoyli<span class="os">OS</span></span>
+    </a>
     <nav class="main">
       <a href="#games">Games</a>
       <a href="#parents">For parents</a>
       <a href="#robo">Robo</a>
+      <a href="#screens">Up close</a>
       <a href="#how">How it works</a>
       <a href="#faq">FAQ</a>
       <a href="https://yoyli.com/he/">עברית</a>
@@ -249,8 +304,8 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
       <p class="lede">Clock, math, letters, counting, colors, memory and more. Same rule: pick a game, pick a level, play.</p>
       <div class="chips" id="learnChips"></div>
       <div class="shots">
-        <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/g/learn-hub-en-1400.webp" alt="Yoyli Learn home screen"><figcaption>Yoyli Learn — the learning shelf</figcaption></figure>
-        <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/store.webp" alt="Yoyli Store with age filter"><figcaption>Yoyli Store — 100+ apps, every install needs a parent's OK</figcaption></figure>
+        <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/g/learn-hub-en-1400.webp" alt="Yoyli Learn home screen, full interface"><figcaption>Yoyli Learn — the learning shelf</figcaption></figure>
+        <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/store.webp" alt="Yoyli Store with age filter, full interface"><figcaption>Yoyli Store — 100+ apps, every install needs a parent's OK</figcaption></figure>
       </div>
     </div>
   </div>
@@ -265,14 +320,14 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
       <p class="lede">YoyliOS has no feed to fight with and nothing to buy inside. What it has is a parents panel — and every switch in it is yours.</p>
     </div>
     <div class="ctrl-grid">
-      <div class="ctrl toy rv"><span class="tag" style="background:#E3F2FD">Screen time</span><h3>A deal, not a daily war</h3><p>Set daily limits together with your child — the "screen-time deal". When time is up, YoyliOS locks. No negotiating with a machine at 9pm.</p></div>
-      <div class="ctrl toy rv"><span class="tag" style="background:#FFF1D6">Bedtime</span><h3>Bedtime mode</h3><p>The computer goes to sleep when you say it does. The bedtime lock ends the "five more minutes" loop for you.</p></div>
-      <div class="ctrl toy rv"><span class="tag" style="background:#E6F7F0">Installs</span><h3>Nothing installs without you</h3><p>A parent password guards every install and removal. The Yoyli Store is a hand-picked catalog filtered by age — and even there, your OK comes first.</p></div>
-      <div class="ctrl toy rv"><span class="tag" style="background:#F1EAFE">Profiles</span><h3>One computer, every kid</h3><p>Age profiles for 2–4, 5–8 and 9–12, with a family "Who's using the computer?" picker. Each child sees games and apps for their age — including a no-reading mode for the little ones.</p></div>
+      <div class="ctrl toy hoverable rv"><span class="tag" style="background:#E3F2FD">Screen time</span><h3>A deal, not a daily war</h3><p>Set daily limits together with your child — the "screen-time deal". When time is up, YoyliOS locks. No negotiating with a machine at 9pm.</p></div>
+      <div class="ctrl toy hoverable rv"><span class="tag" style="background:#FFF1D6">Bedtime</span><h3>Bedtime mode</h3><p>The computer goes to sleep when you say it does. The bedtime lock ends the "five more minutes" loop for you.</p></div>
+      <div class="ctrl toy hoverable rv"><span class="tag" style="background:#E6F7F0">Installs</span><h3>Nothing installs without you</h3><p>A parent password guards every install and removal. The Yoyli Store is a hand-picked catalog filtered by age — and even there, your OK comes first.</p></div>
+      <div class="ctrl toy hoverable rv"><span class="tag" style="background:#F1EAFE">Profiles</span><h3>One computer, every kid</h3><p>Age profiles for 2–4, 5–8 and 9–12, with a family "Who's using the computer?" picker. Each child sees games and apps for their age — including a no-reading mode for the little ones.</p></div>
     </div>
     <div class="shots rv">
-      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/who.webp" alt="Who's using the computer — family profile picker"><figcaption>"Who's using the computer?" — each kid gets their own world</figcaption></figure>
-      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/deal.webp" alt="Screen-time deal in the parents panel"><figcaption>The screen-time deal, set by you</figcaption></figure>
+      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/who.webp" alt="Who's using the computer — family profile picker, full interface"><figcaption>"Who's using the computer?" — each kid gets their own world</figcaption></figure>
+      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/deal.webp" alt="Screen-time deal in the parents panel, full interface"><figcaption>The screen-time deal, set by you</figcaption></figure>
     </div>
   </div>
 </section>
@@ -290,8 +345,24 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
   </div>
 </section>
 
+<!-- ================= UP CLOSE: TABLET + PHONE ================= -->
+<section id="screens" class="alt">
+  <div class="wrap">
+    <div class="sec-head center rv">
+      <span class="eyebrow">Up close</span>
+      <h2>The world your kid sees — up close</h2>
+      <p class="lede" style="margin:0 auto">Big friendly buttons, names they can read, nothing they can break. Here are YoyliOS's own screens on a tablet and a phone, so you can look at the details. YoyliOS itself runs on your PC.</p>
+    </div>
+    <div class="stage rv" id="devicesStage">
+      <canvas class="webgl" id="devicesCanvas" aria-label="A tablet and a phone showing YoyliOS screens up close"></canvas>
+      <div class="fallback"><img src="https://yoyli.com/img/s/animals.webp" alt="Little Play activities for ages 2 to 4"></div>
+    </div>
+    <p class="game-note rv">On the tablet: <b>Little Play</b> (ages 2–4) — tap, hear, play, no reading needed. On the phone: <b>"Who's using the computer?"</b> — every kid taps their own face and lands in their own world.</p>
+  </div>
+</section>
+
 <!-- ================= HOW IT WORKS ================= -->
-<section id="how" class="alt">
+<section id="how">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="eyebrow">How it works</span>
@@ -299,9 +370,9 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
       <p class="lede">Your current system isn't touched unless you choose to install.</p>
     </div>
     <div class="steps">
-      <div class="step toy rv"><div class="num">01</div><h3>Download</h3><p>Get YoyliOS and your lifetime license key right after purchase.</p></div>
-      <div class="step toy rv"><div class="num">02</div><h3>Put it on a USB stick</h3><p>Write it to a 16 GB+ USB stick with a free tool. Step-by-step help is included.</p></div>
-      <div class="step toy rv"><div class="num">03</div><h3>Boot</h3><p>Start the PC from the stick. A short setup creates a profile for each child — and you're playing.</p></div>
+      <div class="step toy hoverable rv"><div class="num">01</div><h3>Download</h3><p>Get YoyliOS and your lifetime license key right after purchase.</p></div>
+      <div class="step toy hoverable rv"><div class="num">02</div><h3>Put it on a USB stick</h3><p>Write it to a 16 GB+ USB stick with a free tool. Step-by-step help is included.</p></div>
+      <div class="step toy hoverable rv"><div class="num">03</div><h3>Boot</h3><p>Start the PC from the stick. A short setup creates a profile for each child — and you're playing.</p></div>
     </div>
     <div class="rv">
       <h3 style="margin-top:40px;font-size:1.3rem">What happens right after you buy</h3>
@@ -313,14 +384,14 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
       </ul>
     </div>
     <div class="shots rv">
-      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/school.webp" alt="School suite made for kids"><figcaption>School suite — writer, slides and sheets with kid-friendly templates</figcaption></figure>
-      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/animals.webp" alt="Little Play activities for ages 2 to 4"><figcaption>Little Play (2–4) — colors, shapes, animals and songs. No reading needed</figcaption></figure>
+      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/school.webp" alt="School suite made for kids, full interface"><figcaption>School suite — writer, slides and sheets with kid-friendly templates</figcaption></figure>
+      <figure class="toy"><img loading="lazy" src="https://yoyli.com/img/s/animals.webp" alt="Little Play activities for ages 2 to 4, full interface"><figcaption>Little Play (2–4) — colors, shapes, animals and songs. No reading needed</figcaption></figure>
     </div>
   </div>
 </section>
 
 <!-- ================= HONEST LIMITS ================= -->
-<section id="limits">
+<section id="limits" class="alt">
   <div class="wrap">
     <div class="sec-head rv">
       <span class="eyebrow">Straight talk</span>
@@ -351,7 +422,7 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
 </section>
 
 <!-- ================= PRICE ================= -->
-<section id="price" class="alt">
+<section id="price">
   <div class="wrap">
     <div class="price-card toy rv">
       <span class="eyebrow">One price. Yours for life.</span>
@@ -368,7 +439,7 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
 </section>
 
 <!-- ================= FAQ ================= -->
-<section id="faq">
+<section id="faq" class="alt">
   <div class="wrap">
     <div class="sec-head center rv"><span class="eyebrow">Questions</span><h2>Before you ask</h2></div>
     <div class="faq rv">
@@ -386,7 +457,22 @@ footer.site .fine{width:100%;color:#8FA0C4;font-size:.9rem}
 
 <footer class="site">
   <div class="wrap">
-    <a class="logo" href="#top" style="color:#fff"><img src="https://yoyli.com/img/logo.webp" alt="YoyliOS logo">YoyliOS</a>
+    <a class="logo" href="#top" aria-label="YoyliOS home">
+      <svg viewBox="0 0 120 120" role="img" aria-label="Yoyli robot">
+        <defs><linearGradient id="robotGradF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9D6BFF"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs>
+        <line x1="60" y1="16" x2="60" y2="32" stroke="#1C2B4A" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="60" cy="12" r="8" fill="#FFC531" stroke="#1C2B4A" stroke-width="4"/>
+        <rect x="4" y="58" width="15" height="25" rx="7.5" fill="#2F9BE8" stroke="#1C2B4A" stroke-width="4"/>
+        <rect x="101" y="58" width="15" height="25" rx="7.5" fill="#2F9BE8" stroke="#1C2B4A" stroke-width="4"/>
+        <rect x="18" y="30" width="84" height="70" rx="27" fill="url(#robotGradF)" stroke="#1C2B4A" stroke-width="5"/>
+        <rect x="30" y="43" width="60" height="45" rx="19" fill="#F3EEFF"/>
+        <circle cx="48" cy="61" r="6.5" fill="#1C2B4A"/><circle cx="72" cy="61" r="6.5" fill="#1C2B4A"/>
+        <circle cx="45.8" cy="58.8" r="2.2" fill="#fff"/><circle cx="69.8" cy="58.8" r="2.2" fill="#fff"/>
+        <path d="M51 73 Q60 81 69 73" stroke="#1C2B4A" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <ellipse cx="37" cy="71" rx="4" ry="2.6" fill="#FF9DB0" opacity=".85"/><ellipse cx="83" cy="71" rx="4" ry="2.6" fill="#FF9DB0" opacity=".85"/>
+      </svg>
+      <span class="word">Yoyli<span class="os">OS</span></span>
+    </a>
     <p style="max-width:44ch">An independent project, built with care for families who want the computer to be a place with edges — not an endless feed.</p>
     <a class="btn sun" href="https://yoyli.lemonsqueezy.com/checkout/buy/9aa14303-4ff4-4c07-846a-e07336667b79">Get YoyliOS · $19</a>
     <p class="fine">Questions: <a href="mailto:yoylios.app@gmail.com">yoylios.app@gmail.com</a> · <a href="https://yoyli.com/privacy">Privacy</a> · <a href="https://yoyli.com/terms">Terms</a> · <a href="https://yoyli.com/refund">Refunds</a> · <a href="https://yoyli.com/accessibility">Accessibility</a></p>
@@ -448,56 +534,162 @@ function syncPicker(i){
 syncPicker(4);
 window.__syncPicker = syncPicker;
 
-/* reveal on scroll */
+/* scroll progress */
 (() => {
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold: .12});
+  const bar = document.getElementById("progress");
+  addEventListener("scroll", () => {
+    const h = document.documentElement;
+    bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + "%";
+  }, {passive: true});
+})();
+
+/* ============================================================
+   BACKGROUNDS — a kindergarten wall in gouache.
+   Every section brings its own drawing + an original animal.
+   ============================================================ */
+const DEFS = `<defs>
+<symbol id="d-cloud" viewBox="0 0 120 60"><path d="M25 50 a18 18 0 1 1 4-35 a24 24 0 0 1 44-8 a20 20 0 0 1 30 12 a15 15 0 0 1 6 31 z" fill="#FFFFFF"/></symbol>
+<symbol id="d-pine" viewBox="0 0 80 130"><rect x="35" y="104" width="10" height="22" rx="4" fill="#A9714B"/><path d="M40 2 L66 52 H14 Z" fill="#4CAF7D"/><path d="M40 34 L72 88 H8 Z" fill="#5FB878"/><path d="M40 66 L76 122 H4 Z" fill="#6FC287"/></symbol>
+<symbol id="d-tree" viewBox="0 0 100 130"><rect x="44" y="86" width="11" height="40" rx="5" fill="#A9714B"/><circle cx="50" cy="46" r="34" fill="#5FB878"/><circle cx="24" cy="66" r="20" fill="#7ED491"/><circle cx="76" cy="66" r="20" fill="#4CAF7D"/><circle cx="38" cy="34" r="5" fill="#FF8FA3"/><circle cx="62" cy="52" r="5" fill="#FF8FA3"/><circle cx="52" cy="24" r="5" fill="#FFB3C1"/></symbol>
+<symbol id="d-flower" viewBox="0 0 30 52"><path d="M15 52 V26" stroke="#4CAF7D" stroke-width="3.5" stroke-linecap="round"/><path d="M15 38 q-10-2-12-10 q9 0 12 6" fill="#7ED491"/><g fill="#FF8FA3"><circle cx="15" cy="8" r="5.5"/><circle cx="7" cy="15" r="5.5"/><circle cx="23" cy="15" r="5.5"/><circle cx="10" cy="23" r="5.5"/><circle cx="20" cy="23" r="5.5"/></g><circle cx="15" cy="15" r="4.5" fill="#FFD93C"/></symbol>
+<symbol id="d-star" viewBox="0 0 40 40"><path d="M20 2 L24 16 L38 20 L24 24 L20 38 L16 24 L2 20 L16 16 Z" fill="#FFD93C"/></symbol>
+<symbol id="d-mush" viewBox="0 0 60 56"><path d="M4 26 a26 20 0 0 1 52 0 z" fill="#FF7B6B"/><circle cx="20" cy="16" r="4.5" fill="#fff"/><circle cx="38" cy="10" r="3.4" fill="#fff"/><circle cx="44" cy="20" r="2.8" fill="#fff"/><rect x="24" y="26" width="12" height="24" rx="6" fill="#FFF3E4"/></symbol>
+<symbol id="d-grass" viewBox="0 0 40 26"><path d="M6 26 Q4 10 0 4 Q10 8 11 26 Z M20 26 Q20 6 16 0 Q26 6 25 26 Z M34 26 Q36 12 40 6 Q30 8 29 26 Z" fill="#6FC287"/></symbol>
+</defs>`;
+const hills = (c1, c2) => `<path d="M0 130 Q240 84 520 118 T1040 108 T1440 122 V230 H0 Z" fill="${c1}"/><path d="M0 168 Q300 128 640 158 T1440 156 V230 H0 Z" fill="${c2}"/>`;
+const FOX = `<g transform="translate(1178,96)"><path d="M6 84 Q-34 78 -30 38 Q-8 58 14 62 Z" fill="#E8833A"/><path d="M-30 38 Q-26 62 -12 70 Q-20 52 -16 44 Z" fill="#FFF3E4"/><ellipse cx="26" cy="76" rx="27" ry="21" fill="#F09A4A"/><ellipse cx="26" cy="80" rx="12" ry="13" fill="#FFF3E4"/><path d="M8 34 L13 8 L27 28 Z" fill="#F09A4A"/><path d="M33 28 L47 8 L52 34 Z" fill="#F09A4A"/><circle cx="30" cy="40" r="23" fill="#F09A4A"/><ellipse cx="30" cy="50" rx="12" ry="9" fill="#FFF3E4"/><circle cx="30" cy="45" r="3.6" fill="#1C2B4A"/><path d="M16 38 Q20 34 24 38 M36 38 Q40 34 44 38" stroke="#1C2B4A" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>`;
+const RABBIT = `<g transform="translate(150,104)"><ellipse cx="6" cy="-16" rx="8" ry="26" fill="#E9EDF5" transform="rotate(-10 6 -16)"/><ellipse cx="24" cy="-18" rx="8" ry="27" fill="#E9EDF5" transform="rotate(8 24 -18)"/><ellipse cx="6" cy="-16" rx="3.6" ry="17" fill="#FFB3C1" transform="rotate(-10 6 -16)"/><ellipse cx="24" cy="-18" rx="3.6" ry="18" fill="#FFB3C1" transform="rotate(8 24 -18)"/><ellipse cx="16" cy="66" rx="25" ry="20" fill="#F4F7FC"/><circle cx="16" cy="26" r="19" fill="#F4F7FC"/><circle cx="9" cy="23" r="2.6" fill="#1C2B4A"/><circle cx="23" cy="23" r="2.6" fill="#1C2B4A"/><ellipse cx="16" cy="30" rx="3.4" ry="2.6" fill="#FF8FA3"/><circle cx="-8" cy="60" r="8" fill="#fff"/></g>`;
+const OWL = `<g transform="translate(1216,58)"><rect x="-58" y="86" width="150" height="11" rx="5.5" fill="#A9714B"/><path d="M-6 6 L4 -8 L12 6 Z M34 6 L44 -8 L52 6 Z" fill="#8A6FD8"/><ellipse cx="24" cy="48" rx="27" ry="38" fill="#8A6FD8"/><ellipse cx="24" cy="58" rx="17" ry="24" fill="#D9CFF7"/><circle cx="14" cy="38" r="8.5" fill="#fff"/><circle cx="34" cy="38" r="8.5" fill="#fff"/><circle cx="14" cy="39" r="4.2" fill="#1C2B4A"/><circle cx="34" cy="39" r="4.2" fill="#1C2B4A"/><path d="M20 46 L28 46 L24 52 Z" fill="#FFC531"/><path d="M-4 52 q-14 4-16 16 M52 52 q14 4 16 16" stroke="#8A6FD8" stroke-width="7" fill="none" stroke-linecap="round"/></g>`;
+const DEER = `<g transform="translate(120,96)"><path d="M52 6 q-4-16-14-20 M60 4 q2-16 12-22" stroke="#A9714B" stroke-width="4.5" fill="none" stroke-linecap="round"/><ellipse cx="34" cy="72" rx="34" ry="22" fill="#DFA05F"/><circle cx="22" cy="66" r="4" fill="#FFF3E4"/><circle cx="44" cy="76" r="3.4" fill="#FFF3E4"/><circle cx="34" cy="60" r="3" fill="#FFF3E4"/><circle cx="64" cy="34" r="17" fill="#DFA05F"/><path d="M50 24 q-6-12-14-13 q4 10 6 15 Z" fill="#DFA05F"/><ellipse cx="66" cy="42" rx="8" ry="6" fill="#F7D9B0"/><circle cx="72" cy="40" r="2.8" fill="#1C2B4A"/><circle cx="58" cy="30" r="2.8" fill="#1C2B4A"/><rect x="8" y="84" width="6" height="22" rx="3" fill="#C98B4B"/><rect x="52" y="84" width="6" height="22" rx="3" fill="#C98B4B"/></g>`;
+const HOUSE = `<g transform="translate(1050,18)"><path d="M118 22 q8-12 18-6 q-2 8-8 10 q4 8-2 14 q-8-6-8-18" fill="#FFB3C1" opacity=".85"/><rect x="30" y="66" width="118" height="88" rx="8" fill="#FFF6E9"/><path d="M16 70 L89 12 L162 70 L148 70 L89 26 L30 70 Z" fill="#FF7B6B"/><rect x="106" y="22" width="16" height="30" rx="3" fill="#B08968"/><rect x="76" y="106" width="26" height="48" rx="12" fill="#A9714B"/><circle cx="97" cy="130" r="2.6" fill="#FFD93C"/><rect x="42" y="88" width="24" height="24" rx="5" fill="#BEE3F8"/><path d="M54 94 c-3-5-12-3-10 3 c1 4 6 6 10 10 c4-4 9-6 10-10 c2-6-7-8-10-3" fill="#FF6B57"/><rect x="118" y="88" width="24" height="24" rx="5" fill="#BEE3F8"/></g>`;
+const FENCECAT = `<g><g stroke="#D9A066" stroke-width="7" stroke-linecap="round"><path d="M560 196 v34 M600 196 v34 M640 196 v34 M680 196 v34 M720 196 v34 M760 196 v34 M800 196 v34"/></g><path d="M548 200 H816" stroke="#D9A066" stroke-width="7" stroke-linecap="round"/><g transform="translate(648,148)"><path d="M34 44 q16 10 8 26" stroke="#F09A4A" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="16" cy="40" rx="17" ry="13" fill="#F09A4A"/><circle cx="14" cy="18" r="13" fill="#F09A4A"/><path d="M4 10 L6 -2 L13 8 Z M18 8 L25 -2 L27 10 Z" fill="#F09A4A"/><circle cx="9" cy="17" r="1.9" fill="#1C2B4A"/><circle cx="19" cy="17" r="1.9" fill="#1C2B4A"/><ellipse cx="14" cy="22" rx="2.4" ry="1.8" fill="#FF8FA3"/></g></g>`;
+const ROCKET = `<g class="tb drift"><g transform="translate(660,26) rotate(24)"><path d="M0-34 C13-16 13 12 0 30 C-13 12-13-16 0-34Z" fill="#F4F7FC"/><circle cx="0" cy="-8" r="8" fill="#BEE3F8" stroke="#2F9BE8" stroke-width="3"/><path d="M-11 16 q-12 10-10 24 l12-6 Z" fill="#FF7B6B"/><path d="M11 16 q12 10 10 24 l-12-6 Z" fill="#FF7B6B"/><path d="M-5 30 q5 16 10 0 q-2 22-5 26 q-3-4-5-26" fill="#FFC531"/></g></g>`;
+const MOON = `<g transform="translate(96,14)"><path d="M44 6 a34 34 0 1 0 24 52 a27 27 0 1 1-24-52" fill="#FFE9A8"/></g>`;
+const HEDGEHOG = `<g transform="translate(1170,120)"><path d="M-6 62 a40 34 0 0 1 78 0 Z" fill="#8A6D4B"/><path d="M2 34 l6-10 5 9 6-11 5 10 6-10 5 9 6-10 5 10 6-8" stroke="#6E5638" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="76" cy="52" r="15" fill="#D9B98F"/><circle cx="88" cy="50" r="3" fill="#1C2B4A"/><circle cx="80" cy="44" r="2.4" fill="#1C2B4A"/><circle cx="30" cy="8" r="10" fill="#FF6B57"/><path d="M30-2 q2-7 8-8" stroke="#4CAF7D" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>`;
+const BEAR = `<g transform="translate(1150,74)"><circle cx="52" cy="-64" r="17" fill="#FF8FA3" class="tb rise"/><path d="M52-47 L44 6" stroke="#66738F" stroke-width="2.5"/><circle cx="8" cy="6" r="11" fill="#C98B4B"/><circle cx="52" cy="6" r="11" fill="#C98B4B"/><circle cx="8" cy="4" r="5" fill="#F7D9B0"/><circle cx="52" cy="4" r="5" fill="#F7D9B0"/><circle cx="30" cy="26" r="21" fill="#DFA05F"/><ellipse cx="30" cy="32" rx="10" ry="8" fill="#F7D9B0"/><ellipse cx="30" cy="28" rx="4" ry="3" fill="#1C2B4A"/><circle cx="22" cy="20" r="2.6" fill="#1C2B4A"/><circle cx="38" cy="20" r="2.6" fill="#1C2B4A"/><ellipse cx="30" cy="76" rx="24" ry="26" fill="#DFA05F"/><ellipse cx="30" cy="80" rx="12" ry="15" fill="#F7D9B0"/><path d="M50 62 q16-4 14-22" stroke="#DFA05F" stroke-width="9" fill="none" stroke-linecap="round"/></g>`;
+const BUTTERFLIES = `<g class="tb flutter"><g transform="translate(330,54)"><ellipse cx="-11" cy="0" rx="11" ry="7" fill="#FF8FA3" transform="rotate(-28)"/><ellipse cx="11" cy="0" rx="11" ry="7" fill="#FFB3C1" transform="rotate(28)"/><rect x="-2" y="-9" width="4" height="18" rx="2" fill="#1C2B4A"/></g></g><g class="tb flutter" style="animation-delay:-2.4s"><g transform="translate(1080,34) scale(.8)"><ellipse cx="-11" cy="0" rx="11" ry="7" fill="#7CC4F5" transform="rotate(-28)"/><ellipse cx="11" cy="0" rx="11" ry="7" fill="#BEE3F8" transform="rotate(28)"/><rect x="-2" y="-9" width="4" height="18" rx="2" fill="#1C2B4A"/></g></g>`;
+const BEE = `<path class="bee-path" d="M180 70 q60-34 120 0 t120 0" stroke="#B08968" stroke-width="2.5" fill="none" opacity=".6"/><g class="tb flutter" style="animation-duration:3.4s"><g transform="translate(238,44)"><ellipse cx="0" cy="0" rx="13" ry="10" fill="#FFD93C"/><path d="M-3-9 v18 M4-9 v18" stroke="#1C2B4A" stroke-width="4"/><ellipse cx="-2" cy="-12" rx="8" ry="5" fill="#fff" opacity=".85"/><ellipse cx="7" cy="-11" rx="6" ry="4" fill="#fff" opacity=".7"/></g></g>`;
+const STARS = n => Array.from({length: n}, (_, i) => `<use href="#d-star" class="twinkle" style="animation-delay:${(i * .53).toFixed(1)}s" x="${(i * 173) % 1380 + 20}" y="${(i * 37) % 60 + 6}" width="26" height="26"/>`).join("");
+const CLOUDS = `<use href="#d-cloud" class="drift" x="60" y="6" width="150" height="75" opacity=".95"/><use href="#d-cloud" class="drift drift2" x="1120" y="0" width="180" height="90" opacity=".9"/><use href="#d-cloud" class="drift" style="animation-delay:-5s" x="640" y="16" width="110" height="55" opacity=".8"/>`;
+const FLOWERS = `<use href="#d-flower" x="420" y="168" width="30" height="52"/><use href="#d-flower" x="468" y="178" width="24" height="42"/><use href="#d-flower" x="920" y="170" width="28" height="48"/><use href="#d-flower" x="966" y="180" width="22" height="38"/><use href="#d-grass" x="240" y="196" width="44" height="28"/><use href="#d-grass" x="700" y="200" width="40" height="26"/><use href="#d-grass" x="1300" y="192" width="46" height="30"/>`;
+
+const SCENES = {
+  hero:      hills("#BDE8C8", "#93D6A4") + CLOUDS + `<use href="#d-tree" x="30" y="86" width="96" height="124"/><use href="#d-pine" x="1330" y="92" width="76" height="124"/>` + RABBIT + FOX + FLOWERS,
+  games:     hills("#A9DCAE", "#7CC78F") + `<use href="#d-pine" x="16" y="60" width="92" height="150"/><use href="#d-pine" x="90" y="86" width="70" height="114"/><use href="#d-tree" x="1246" y="66" width="110" height="142"/><use href="#d-pine" x="1360" y="88" width="66" height="108"/><use href="#d-mush" x="330" y="168" width="52" height="48"/><use href="#d-mush" x="1050" y="182" width="38" height="35"/>` + DEER + OWL + FLOWERS,
+  parents:   hills("#CDEBC0", "#A9DCAE") + HOUSE + FENCECAT + `<use href="#d-tree" x="36" y="80" width="100" height="130"/>` + FLOWERS,
+  robo:      hills("#46598A", "#2F4066") + MOON + STARS(9) + ROCKET + `<use href="#d-pine" x="1300" y="96" width="70" height="114" opacity=".8"/><use href="#d-pine" x="60" y="104" width="58" height="94" opacity=".7"/>`,
+  screens:   hills("#BDE8C8", "#93D6A4") + BUTTERFLIES + BEE + `<use href="#d-tree" x="1252" y="76" width="104" height="134"/><use href="#d-pine" x="40" y="94" width="72" height="118"/>` + FLOWERS + `<use href="#d-flower" x="180" y="172" width="28" height="48"/><use href="#d-flower" x="1180" y="176" width="26" height="44"/>`,
+  how:       hills("#BDE8C8", "#93D6A4") + `<path d="M620 230 q30-40-6-66 q-30-22 4-44 q26-17 6-38" stroke="#EFDBB2" stroke-width="30" fill="none" stroke-linecap="round"/><g transform="translate(560,64)"><rect x="0" y="0" width="8" height="66" rx="4" fill="#A9714B"/><path d="M-4 6 H52 l10 9-10 9 H-4 Z" fill="#FFC531"/><path d="M4 32 H44 l9 8-9 8 H4 Z" fill="#2F9BE8" transform="translate(-8,0)"/></g><use href="#d-pine" x="90" y="84" width="78" height="126"/><use href="#d-tree" x="1300" y="80" width="98" height="128"/>` + HEDGEHOG + FLOWERS,
+  limits:    hills("#BDE8C8", "#93D6A4") + `<g fill="none" stroke-linecap="round"><path d="M120 190 a210 210 0 0 1 420 0" stroke="#FF8FA3" stroke-width="17"/><path d="M146 190 a184 184 0 0 1 368 0" stroke="#FFC531" stroke-width="17"/><path d="M172 190 a158 158 0 0 1 316 0" stroke="#7ED491" stroke-width="17"/><path d="M198 190 a132 132 0 0 1 264 0" stroke="#7CC4F5" stroke-width="17"/></g><use href="#d-cloud" x="66" y="146" width="130" height="65"/><use href="#d-cloud" x="420" y="150" width="120" height="60"/>` + BEAR + FLOWERS,
+  price:     hills("#FFE9A8", "#FFD93C") + CLOUDS + `<g class="tb rise"><g transform="translate(120,60)"><ellipse cx="0" cy="0" rx="17" ry="21" fill="#FF8FA3"/><path d="M0 21 l-4 8 h8 Z" fill="#E56B8C"/><path d="M0 29 q-6 16 2 26" stroke="#66738F" stroke-width="2.2" fill="none"/></g></g><g class="tb rise" style="animation-delay:-3s"><g transform="translate(1300,44) scale(.85)"><ellipse cx="0" cy="0" rx="17" ry="21" fill="#7CC4F5"/><path d="M0 21 l-4 8 h8 Z" fill="#2F9BE8"/><path d="M0 29 q6 16-2 26" stroke="#66738F" stroke-width="2.2" fill="none"/></g></g>` + FLOWERS,
+  faq:       hills("#CDEBC0", "#A9DCAE") + `<g transform="translate(96,84) scale(.92)">${OWL.replace('translate(1216,58)', 'translate(0,0)')}<rect x="-70" y="96" width="120" height="10" rx="5" fill="#A9714B"/><rect x="6" y="76" width="34" height="24" rx="4" fill="#FF6B57" transform="rotate(-8 23 88)"/></g>` + STARS(4) + FLOWERS
+};
+(() => {
+  const defsHost = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  defsHost.setAttribute("width", "0"); defsHost.setAttribute("height", "0");
+  defsHost.style.position = "absolute"; defsHost.innerHTML = DEFS;
+  document.body.appendChild(defsHost);
+  const hosts = {hero: ".hero", games: "#games", parents: "#parents", robo: "#robo", screens: "#screens", how: "#how", limits: "#limits", price: "#price", faq: "#faq"};
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), {threshold: .1});
+  for (const [key, sel] of Object.entries(hosts)) {
+    const host = document.querySelector(sel);
+    if (!host || !SCENES[key]) continue;
+    host.classList.add("has-scene");
+    const div = document.createElement("div");
+    div.className = "scene"; div.setAttribute("aria-hidden", "true");
+    div.innerHTML = `<svg viewBox="0 0 1440 230" preserveAspectRatio="xMidYMax slice">${SCENES[key]}</svg>`;
+    host.appendChild(div);
+    io.observe(div);
+  }
   document.querySelectorAll(".rv").forEach(el => io.observe(el));
 })();
 </script>
 
 <script type="importmap">
-{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
 </script>
 
 <script type="module">
 import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const loadImg = src => new Promise(res => { const im = new Image(); im.crossOrigin = "anonymous"; im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
-function cover(ctx, img, W, H, dx = 0) {
+/* FULL interface, never cropped: blurred cover as backdrop + the whole image fitted on top */
+function fitDraw(ctx, img, W, H, dx = 0) {
   if (!img) { ctx.fillStyle = "#2F9BE8"; ctx.fillRect(dx, 0, W, H); return; }
-  const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+  const cs = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+  ctx.save();
+  ctx.filter = "blur(18px) brightness(.92)";
+  ctx.drawImage(img, dx + (W - img.naturalWidth * cs) / 2 - 20, (H - img.naturalHeight * cs) / 2 - 20, img.naturalWidth * cs + 40, img.naturalHeight * cs + 40);
+  ctx.restore();
+  const s = Math.min(W / img.naturalWidth, H / img.naturalHeight);
   const w = img.naturalWidth * s, h = img.naturalHeight * s;
   ctx.drawImage(img, dx + (W - w) / 2, (H - h) / 2, w, h);
 }
 function makeRenderer(canvas) {
   const r = new THREE.WebGLRenderer({canvas, antialias: true, alpha: true});
-  r.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  r.setPixelRatio(Math.min(devicePixelRatio, 1.6));
+  r.shadowMap.enabled = true;
+  r.shadowMap.type = THREE.PCFSoftShadowMap;
+  r.toneMapping = THREE.ACESFilmicToneMapping;
+  r.toneMappingExposure = 1.05;
   return r;
+}
+function stageEnv(renderer, scene) {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
 }
 function fitRenderer(r, cam, canvas) {
   const w = canvas.clientWidth || 860, h = canvas.clientHeight || 540;
   r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
 }
+function watch(canvas, cb) {
+  let vis = false;
+  new IntersectionObserver(es => es.forEach(e => vis = e.isIntersecting), {threshold: .12}).observe(canvas);
+  return () => vis;
+}
+let PTRX = 0;
+addEventListener("pointermove", e => { PTRX = e.clientX / innerWidth - .5; }, {passive: true});
+const RB = (w, h, d, r = .04, s = 3) => new RoundedBoxGeometry(w, h, d, s, r);
+function shadowed(m) { m.castShadow = true; m.receiveShadow = true; return m; }
+function groundShadow(radius, opacity = .16) {
+  const c = document.createElement("canvas"); c.width = c.height = 128;
+  const x = c.getContext("2d");
+  const g = x.createRadialGradient(64, 64, 6, 64, 64, 62);
+  g.addColorStop(0, "rgba(20,30,55,.85)"); g.addColorStop(1, "rgba(20,30,55,0)");
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+  const t = new THREE.CanvasTexture(c);
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(radius * 2, radius * 2), new THREE.MeshBasicMaterial({map: t, transparent: true, opacity, depthWrite: false}));
+  m.rotation.x = -Math.PI / 2;
+  return m;
+}
 
 /* ============================================================
-   LAPTOP — opens toward you, bootloader, then YoyliOS boots
+   LAPTOP v2 — rounded unibody, real hinge, bootloader → YoyliOS
    ============================================================ */
 const laptopStage = document.getElementById("laptopStage");
-let laptop = null;
-try { laptop = initLaptop(); } catch(e) { laptopStage.classList.add("no-webgl"); }
+try { initLaptop(); } catch(e) { laptopStage.classList.add("no-webgl"); }
 
 async function initLaptop() {
   const canvas = document.getElementById("laptopCanvas");
   const renderer = makeRenderer(canvas);
   const scene = new THREE.Scene();
-  const cam = new THREE.PerspectiveCamera(38, 16 / 10, .1, 100);
-  cam.position.set(0, 2.1, 6.6); cam.lookAt(0, .95, 0);
-  scene.add(new THREE.AmbientLight(0xffffff, .85));
-  const key = new THREE.DirectionalLight(0xffffff, 1.1); key.position.set(3, 6, 5); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xFFC531, .35); rim.position.set(-4, 3, -3); scene.add(rim);
+  stageEnv(renderer, scene);
+  const cam = new THREE.PerspectiveCamera(37, 16 / 10, .1, 100);
+  cam.position.set(0, 2.15, 6.7); cam.lookAt(0, .92, 0);
+  scene.add(new THREE.AmbientLight(0xffffff, .5));
+  const key = new THREE.DirectionalLight(0xffffff, 2.2);
+  key.position.set(3.5, 6.5, 5); key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 6;
+  key.shadow.camera.left = -4; key.shadow.camera.right = 4; key.shadow.camera.top = 4; key.shadow.camera.bottom = -3;
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xFFC531, .7); rim.position.set(-4, 3, -3.5); scene.add(rim);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({opacity: .15}));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -.02; floor.receiveShadow = true; scene.add(floor);
 
-  /* --- boot screen (2D canvas -> texture) --- */
+  /* boot screen canvas */
   const bc = document.createElement("canvas"); bc.width = 1024; bc.height = 620;
   const bx = bc.getContext("2d");
   const osImg = await loadImg("https://yoyli.com/img/s/hero018-1200.webp");
@@ -505,104 +697,118 @@ async function initLaptop() {
   let bootStart = null;
   function drawBoot(now) {
     const W = 1024, H = 620;
-    if (bootStart === null) { bx.fillStyle = "#05080F"; bx.fillRect(0, 0, W, H); return 0; }
+    if (bootStart === null) { bx.fillStyle = "#05080F"; bx.fillRect(0, 0, W, H); return; }
     const t = (now - bootStart) / 1000;
     const bootDur = REDUCED ? .1 : 2.9, fadeDur = .7;
     if (t < bootDur) {
       bx.fillStyle = "#0B1428"; bx.fillRect(0, 0, W, H);
-      bx.fillStyle = "#FFC531"; bx.beginPath(); bx.roundRect(452, 92, 120, 120, 28); bx.fill();
-      bx.fillStyle = "#1C2B4A"; bx.font = "900 84px Rubik, sans-serif"; bx.textAlign = "center"; bx.fillText("Y", 512, 182);
-      bx.fillStyle = "#FFFFFF"; bx.font = "900 44px Rubik, sans-serif"; bx.fillText("YoyliOS", 512, 268);
+      bx.fillStyle = "#FFC531"; bx.beginPath(); bx.roundRect(452, 84, 120, 120, 30); bx.fill();
+      bx.fillStyle = "#1C2B4A"; bx.font = "900 84px Rubik, sans-serif"; bx.textAlign = "center"; bx.fillText("Y", 512, 176);
+      bx.fillStyle = "#FFFFFF"; bx.font = "900 44px Rubik, sans-serif"; bx.fillText("YoyliOS", 512, 262);
       bx.textAlign = "left"; bx.font = "26px ui-monospace, Menlo, monospace";
       const shown = Math.min(LINES.length, Math.floor(t / (REDUCED ? .02 : .30)) + 1);
       for (let i = 0; i < shown; i++) {
         bx.fillStyle = i === LINES.length - 1 ? "#2FBF8F" : "#9FB4D8";
-        bx.fillText(LINES[i], 212, 340 + i * 34);
+        bx.fillText(LINES[i], 212, 334 + i * 34);
       }
       const p = Math.min(1, t / (bootDur * .92));
-      bx.strokeStyle = "#3D4E73"; bx.lineWidth = 3; bx.strokeRect(212, 592 - 30, 600, 20);
+      bx.strokeStyle = "#3D4E73"; bx.lineWidth = 3; bx.strokeRect(212, 562, 600, 20);
       bx.fillStyle = "#2F9BE8"; bx.fillRect(215, 565, 594 * p, 14);
-      return 1;
+      return;
     }
     const f = Math.min(1, (t - bootDur) / fadeDur);
-    cover(bx, osImg, W, H);
+    fitDraw(bx, osImg, W, H);
     if (f < 1) { bx.fillStyle = `rgba(11,20,40,${1 - f})`; bx.fillRect(0, 0, W, H); }
     const sweep = ((now / 4200) % 1.4) - .2;
     const g = bx.createLinearGradient(W * sweep - 200, 0, W * sweep + 200, H);
     g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(.5, "rgba(255,255,255,.10)"); g.addColorStop(1, "rgba(255,255,255,0)");
     bx.fillStyle = g; bx.fillRect(0, 0, W, H);
-    return 2;
   }
   const screenTex = new THREE.CanvasTexture(bc);
   screenTex.colorSpace = THREE.SRGBColorSpace;
+  screenTex.anisotropy = 4;
 
-  /* --- laptop body --- */
   const grp = new THREE.Group(); scene.add(grp);
-  const alu = new THREE.MeshStandardMaterial({color: 0xD9E2EF, roughness: .45, metalness: .25});
-  const navy = new THREE.MeshStandardMaterial({color: 0x1C2B4A, roughness: .5, metalness: .15});
-  const base = new THREE.Mesh(new THREE.BoxGeometry(3.6, .16, 2.4), alu); base.position.y = .08; grp.add(base);
-  /* keyboard deck texture */
-  const kc = document.createElement("canvas"); kc.width = 512; kc.height = 340;
-  const kx = kc.getContext("2d");
-  kx.fillStyle = "#C7D2E4"; kx.fillRect(0, 0, 512, 340);
-  kx.fillStyle = "#EDF2FA";
-  for (let r = 0; r < 5; r++) for (let c = 0; c < 13; c++) { kx.beginPath(); kx.roundRect(18 + c * 37, 16 + r * 34, 30, 27, 5); kx.fill(); }
-  kx.beginPath(); kx.roundRect(126, 196, 260, 30, 6); kx.fill();
-  kx.fillStyle = "#B9C6DC"; kx.beginPath(); kx.roundRect(176, 244, 160, 82, 10); kx.fill();
-  const deckTex = new THREE.CanvasTexture(kc); deckTex.colorSpace = THREE.SRGBColorSpace;
-  const deck = new THREE.Mesh(new THREE.PlaneGeometry(3.34, 2.14), new THREE.MeshStandardMaterial({map: deckTex, roughness: .6}));
-  deck.rotation.x = -Math.PI / 2; deck.position.y = .165; grp.add(deck);
-  /* lid on a hinge at the back edge */
-  const hinge = new THREE.Group(); hinge.position.set(0, .16, -1.2); grp.add(hinge);
-  const lid = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.3, .1), navy); lid.position.y = 1.15; hinge.add(lid);
-  const screen = new THREE.Mesh(new THREE.PlaneGeometry(3.32, 2.02), new THREE.MeshBasicMaterial({map: screenTex}));
-  screen.position.set(0, 1.15, .056); hinge.add(screen);
-  const logoDot = new THREE.Mesh(new THREE.CircleGeometry(.17, 32), new THREE.MeshBasicMaterial({color: 0xFFC531}));
-  logoDot.position.set(0, 1.15, -.056); logoDot.rotation.y = Math.PI; hinge.add(logoDot);
-  /* soft shadow */
-  const sh = new THREE.Mesh(new THREE.CircleGeometry(2.6, 40), new THREE.MeshBasicMaterial({color: 0x1C2B4A, transparent: true, opacity: .13}));
-  sh.rotation.x = -Math.PI / 2; sh.position.y = -.02; sh.scale.y = .55; scene.add(sh);
+  const alu = new THREE.MeshStandardMaterial({color: 0xDCE5F2, roughness: .38, metalness: .55});
+  const aluDark = new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .42, metalness: .5});
+  const base = shadowed(new THREE.Mesh(RB(3.6, .17, 2.42, .07), alu)); base.position.y = .085; grp.add(base);
+  /* keyboard deck: real shallow keys */
+  const deckC = document.createElement("canvas"); deckC.width = 512; deckC.height = 340;
+  const dx2 = deckC.getContext("2d");
+  dx2.fillStyle = "#CBD6E8"; dx2.fillRect(0, 0, 512, 340);
+  dx2.fillStyle = "#B7C5DB"; dx2.beginPath(); dx2.roundRect(176, 242, 160, 84, 12); dx2.fill();
+  dx2.strokeStyle = "#9FB0CA"; dx2.lineWidth = 2; dx2.beginPath(); dx2.roundRect(176, 242, 160, 84, 12); dx2.stroke();
+  const deckTex = new THREE.CanvasTexture(deckC); deckTex.colorSpace = THREE.SRGBColorSpace;
+  const deck = new THREE.Mesh(new THREE.PlaneGeometry(3.36, 2.18), new THREE.MeshStandardMaterial({map: deckTex, roughness: .55, metalness: .2}));
+  deck.rotation.x = -Math.PI / 2; deck.position.y = .172; deck.receiveShadow = true; grp.add(deck);
+  const keyMat = new THREE.MeshStandardMaterial({color: 0xEDF2FA, roughness: .5, metalness: .1});
+  const keyGeo = RB(.185, .028, .185, .012, 2);
+  const keys = new THREE.InstancedMesh(keyGeo, keyMat, 5 * 13);
+  const M = new THREE.Matrix4();
+  let ki = 0;
+  for (let r = 0; r < 5; r++) for (let c = 0; c < 13; c++) {
+    M.setPosition(-1.32 + c * .22, .186, -.78 + r * .215);
+    keys.setMatrixAt(ki++, M);
+  }
+  keys.castShadow = false; keys.receiveShadow = true; grp.add(keys);
+  const space = new THREE.Mesh(RB(1.15, .028, .185, .012), keyMat);
+  space.position.set(0, .186, .30); grp.add(space);
+  /* hinge barrel */
+  const hingeBar = new THREE.Mesh(new THREE.CylinderGeometry(.075, .075, 3.1, 20), aluDark);
+  hingeBar.rotation.z = Math.PI / 2; hingeBar.position.set(0, .17, -1.19); grp.add(hingeBar);
+  /* lid */
+  const hinge = new THREE.Group(); hinge.position.set(0, .17, -1.19); grp.add(hinge);
+  const lid = shadowed(new THREE.Mesh(RB(3.6, 2.34, .11, .05), aluDark)); lid.position.y = 1.17; hinge.add(lid);
+  const bezel = new THREE.Mesh(RB(3.38, 2.12, .02, .03), new THREE.MeshStandardMaterial({color: 0x0A0F1D, roughness: .3, metalness: .3}));
+  bezel.position.set(0, 1.17, .052); hinge.add(bezel);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(3.22, 1.95), new THREE.MeshBasicMaterial({map: screenTex}));
+  screen.position.set(0, 1.17, .066); hinge.add(screen);
+  const camDot = new THREE.Mesh(new THREE.CircleGeometry(.022, 12), new THREE.MeshBasicMaterial({color: 0x3D5A80}));
+  camDot.position.set(0, 2.22, .066); hinge.add(camDot);
+  const logoRing = new THREE.Mesh(new THREE.TorusGeometry(.15, .028, 12, 36), new THREE.MeshStandardMaterial({color: 0xFFC531, roughness: .35, metalness: .4}));
+  logoRing.position.set(0, 1.17, -.062); hinge.add(logoRing);
+  const logoDot = new THREE.Mesh(new THREE.CircleGeometry(.085, 24), new THREE.MeshBasicMaterial({color: 0xFFC531}));
+  logoDot.position.set(0, 1.17, -.062); logoDot.rotation.y = Math.PI; hinge.add(logoDot);
+  /* side ports */
+  [-1.81, 1.81].forEach(x => {
+    const port = new THREE.Mesh(RB(.02, .05, .34, .01), aluDark);
+    port.position.set(x, .09, -.3); grp.add(port);
+  });
+  const blob = groundShadow(2.9, .5); blob.position.y = 0; scene.add(blob);
 
   const CLOSED = 1.62, OPEN = -.20;
   hinge.rotation.x = CLOSED;
   let phase = "idle", animStart = 0;
+  const easeOutBack = x => { const c = 1.35; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
   function play(now) { phase = "anim"; animStart = now; bootStart = null; }
-  const easeOut = x => 1 - Math.pow(1 - x, 3);
-
-  let visible = false;
-  new IntersectionObserver(es => es.forEach(e => {
-    visible = e.isIntersecting;
-    if (visible && phase === "idle") play(performance.now());
-  }), {threshold: .25}).observe(canvas);
+  let visOnce = false;
+  const isVis = watch(canvas, () => { if (!visOnce) { visOnce = true; play(performance.now()); } });
+  new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && phase === "idle") play(performance.now()); }), {threshold: .25}).observe(canvas);
   canvas.addEventListener("click", () => play(performance.now()));
   new ResizeObserver(() => fitRenderer(renderer, cam, canvas)).observe(canvas);
   fitRenderer(renderer, cam, canvas);
 
-  let mx = 0;
-  addEventListener("pointermove", e => { mx = (e.clientX / innerWidth - .5); }, {passive: true});
-
   const clock = new THREE.Clock();
   (function loop() {
     requestAnimationFrame(loop);
-    if (!visible) return;
+    if (!isVis()) return;
     const now = performance.now(), t = clock.getElapsedTime();
     if (phase === "anim") {
-      const p = Math.min(1, (now - animStart) / (REDUCED ? 60 : 1900));
-      hinge.rotation.x = CLOSED + (OPEN - CLOSED) * easeOut(p);
+      const p = Math.min(1, (now - animStart) / (REDUCED ? 60 : 2000));
+      hinge.rotation.x = CLOSED + (OPEN - CLOSED) * (REDUCED ? p : easeOutBack(p));
       if (p > .30 && bootStart === null) bootStart = now + 60;
-      if (p >= 1) phase = "open";
+      if (p >= 1) { hinge.rotation.x = OPEN; phase = "open"; }
     }
-    grp.rotation.y = REDUCED ? 0 : Math.sin(t * .45) * .05 + mx * .25;
+    grp.rotation.y = REDUCED ? 0 : Math.sin(t * .45) * .05 + PTRX * .3;
     grp.position.y = REDUCED ? 0 : Math.sin(t * .9) * .03;
     drawBoot(now);
     screenTex.needsUpdate = true;
     renderer.render(scene, cam);
   })();
-  return true;
 }
 
 /* ============================================================
-   DESK — monitor, keyboard, mouse, tower. Games play live.
+   DESK v2 — rounded everything, 3D keys, glowing tower guts
    ============================================================ */
 const deskStage = document.getElementById("deskStage");
 try { initDesk(); } catch(e) { deskStage.classList.add("no-webgl"); }
@@ -611,20 +817,59 @@ async function initDesk() {
   const canvas = document.getElementById("deskCanvas");
   const renderer = makeRenderer(canvas);
   const scene = new THREE.Scene();
+  stageEnv(renderer, scene);
   const cam = new THREE.PerspectiveCamera(40, 16 / 10, .1, 100);
-  cam.position.set(0, 3.1, 7.8); cam.lookAt(0, 1.45, 0);
-  scene.add(new THREE.AmbientLight(0xffffff, .8));
-  const key = new THREE.DirectionalLight(0xffffff, 1.0); key.position.set(4, 7, 5); scene.add(key);
-  const warm = new THREE.PointLight(0xFFC531, 12, 20); warm.position.set(-4, 4, 3); scene.add(warm);
+  cam.position.set(0, 3.15, 7.9); cam.lookAt(0, 1.42, 0);
+  scene.add(new THREE.AmbientLight(0xffffff, .45));
+  const key = new THREE.DirectionalLight(0xffffff, 2.0);
+  key.position.set(4.5, 7.5, 5.5); key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 7;
+  key.shadow.camera.left = -6; key.shadow.camera.right = 6; key.shadow.camera.top = 6; key.shadow.camera.bottom = -4;
+  scene.add(key);
+  const warm = new THREE.PointLight(0xFFB35C, 30, 18, 1.6); warm.position.set(-4.2, 3.4, 2.6); scene.add(warm);
 
-  const ink = new THREE.MeshStandardMaterial({color: 0x232F4D, roughness: .55, metalness: .2});
-  const wood = new THREE.MeshStandardMaterial({color: 0xC89B6D, roughness: .8});
+  /* room: wall + floor */
+  const wallC = document.createElement("canvas"); wallC.width = 16; wallC.height = 256;
+  const wx = wallC.getContext("2d");
+  const wg = wx.createLinearGradient(0, 0, 0, 256);
+  wg.addColorStop(0, "#FDF3DF"); wg.addColorStop(1, "#F3E3C2");
+  wx.fillStyle = wg; wx.fillRect(0, 0, 16, 256);
+  const wallTex = new THREE.CanvasTexture(wallC); wallTex.colorSpace = THREE.SRGBColorSpace;
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(30, 12), new THREE.MeshStandardMaterial({map: wallTex, roughness: 1}));
+  wall.position.set(0, 5, -2.6); wall.receiveShadow = true; scene.add(wall);
+  const floorM = new THREE.Mesh(new THREE.PlaneGeometry(30, 14), new THREE.MeshStandardMaterial({color: 0xE7DCC6, roughness: .95}));
+  floorM.rotation.x = -Math.PI / 2; floorM.position.set(0, 0, 3); floorM.receiveShadow = true; scene.add(floorM);
+
+  const ink = new THREE.MeshStandardMaterial({color: 0x232F4D, roughness: .45, metalness: .35});
+  /* wood texture */
+  const woodC = document.createElement("canvas"); woodC.width = 512; woodC.height = 128;
+  const wdx = woodC.getContext("2d");
+  wdx.fillStyle = "#C79A67"; wdx.fillRect(0, 0, 512, 128);
+  for (let i = 0; i < 46; i++) {
+    wdx.strokeStyle = `rgba(140,95,50,${.05 + Math.random() * .12})`;
+    wdx.lineWidth = 1 + Math.random() * 2.4;
+    wdx.beginPath();
+    const y = Math.random() * 128;
+    wdx.moveTo(0, y);
+    for (let x = 0; x <= 512; x += 64) wdx.lineTo(x, y + Math.sin(x / 60 + i) * 3.5);
+    wdx.stroke();
+  }
+  const woodTex = new THREE.CanvasTexture(woodC); woodTex.colorSpace = THREE.SRGBColorSpace;
+  woodTex.wrapS = woodTex.wrapT = THREE.RepeatWrapping; woodTex.repeat.set(2, 1);
+  const wood = new THREE.MeshStandardMaterial({map: woodTex, roughness: .72, metalness: .05});
+
   const grp = new THREE.Group(); scene.add(grp);
   const deskTopY = 1.16;
-  const desk = new THREE.Mesh(new THREE.BoxGeometry(10, .26, 3.4), wood); desk.position.set(0, deskTopY - .13, .2); grp.add(desk);
-  [-4.6, 4.6].forEach(x => { const leg = new THREE.Mesh(new THREE.BoxGeometry(.28, 1.05, 3.0), wood); leg.position.set(x, .52, .2); grp.add(leg); });
+  const desk = shadowed(new THREE.Mesh(RB(10, .26, 3.4, .05), wood)); desk.position.set(0, deskTopY - .13, .2); grp.add(desk);
+  [-4.55, 4.55].forEach(x => {
+    const leg = shadowed(new THREE.Mesh(RB(.3, 1.04, 3.0, .04), wood));
+    leg.position.set(x, .52, .2); grp.add(leg);
+  });
+  /* desk mat */
+  const mat = new THREE.Mesh(RB(4.6, .035, 1.7, .017), new THREE.MeshStandardMaterial({color: 0x3D4E73, roughness: .9}));
+  mat.position.set(-.55, deskTopY + .018, .95); mat.receiveShadow = true; grp.add(mat);
 
-  /* --- live game screen (carousel canvas) --- */
+  /* --- live game screen --- */
   const sc = document.createElement("canvas"); sc.width = 1024; sc.height = 576;
   const sx = sc.getContext("2d");
   const imgs = await Promise.all(GAMES.map(g => loadImg(IMG(g.img))));
@@ -638,11 +883,11 @@ async function initDesk() {
     if (slideT < 1) {
       slideT = Math.min(1, slideT + dt / .75);
       const e = 1 - Math.pow(1 - slideT, 3), off = -e * W;
-      cover(sx, imgs[cur], W, H, off); cover(sx, imgs[nxt], W, H, off + W);
+      fitDraw(sx, imgs[cur], W, H, off); fitDraw(sx, imgs[nxt], W, H, off + W);
       if (slideT >= 1) cur = nxt;
-    } else cover(sx, imgs[cur], W, H, 0);
+    } else fitDraw(sx, imgs[cur], W, H, 0);
     bubbles.forEach(b => {
-      if (!REDUCED) { b.y -= b.s * dt * 60 * .45; b.x += Math.sin(now / 700 + b.w) * .35; if (b.y < -30) { b.y = H + 30; b.x = Math.random() * W; } }
+      if (!REDUCED) { b.y -= b.s * dt * 27; b.x += Math.sin(now / 700 + b.w) * .35; if (b.y < -30) { b.y = H + 30; b.x = Math.random() * W; } }
       sx.beginPath(); sx.arc(b.x, b.y, b.r, 0, 6.283);
       sx.fillStyle = "rgba(255,255,255,.20)"; sx.fill(); sx.strokeStyle = "rgba(255,255,255,.55)"; sx.lineWidth = 2; sx.stroke();
       sx.beginPath(); sx.arc(b.x - b.r * .35, b.y - b.r * .35, b.r * .28, 0, 6.283); sx.fillStyle = "rgba(255,255,255,.5)"; sx.fill();
@@ -655,77 +900,223 @@ async function initDesk() {
     sx.fillStyle = "#FF6B57"; sx.beginPath(); sx.arc(38, 42, 9, 0, 6.283); sx.fill();
     sx.fillStyle = "#fff"; sx.font = "700 22px Rubik, sans-serif"; sx.textAlign = "left"; sx.fillText("LIVE · Yoyli Games", 58, 50);
   }
-  const screenTex = new THREE.CanvasTexture(sc); screenTex.colorSpace = THREE.SRGBColorSpace;
+  const screenTex = new THREE.CanvasTexture(sc); screenTex.colorSpace = THREE.SRGBColorSpace; screenTex.anisotropy = 4;
 
-  /* monitor */
-  const mon = new THREE.Group(); mon.position.set(-.8, deskTopY, -.55); grp.add(mon);
-  const mbase = new THREE.Mesh(new THREE.BoxGeometry(1.7, .09, 1.0), ink); mbase.position.y = .05; mon.add(mbase);
-  const neck = new THREE.Mesh(new THREE.BoxGeometry(.2, .9, .14), ink); neck.position.y = .5; mon.add(neck);
-  const frame = new THREE.Mesh(new THREE.BoxGeometry(4.05, 2.42, .13), ink); frame.position.y = 1.92; mon.add(frame);
-  const scr = new THREE.Mesh(new THREE.PlaneGeometry(3.78, 2.14), new THREE.MeshBasicMaterial({map: screenTex}));
-  scr.position.set(0, 1.92, .075); mon.add(scr);
+  /* monitor — slim bezel, curved stand arm */
+  const mon = new THREE.Group(); mon.position.set(-.85, deskTopY, -.55); grp.add(mon);
+  const mbase = shadowed(new THREE.Mesh(RB(1.8, .09, 1.05, .04), ink)); mbase.position.y = .045; mon.add(mbase);
+  const arm = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.09, .13, .95, 16), ink));
+  arm.position.set(0, .5, -.18); arm.rotation.x = .18; mon.add(arm);
+  const frame = shadowed(new THREE.Mesh(RB(4.05, 2.42, .13, .05), ink)); frame.position.y = 1.94; mon.add(frame);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(3.82, 2.16), new THREE.MeshBasicMaterial({map: screenTex}));
+  scr.position.set(0, 1.94, .072); mon.add(scr);
+  const pwrLed = new THREE.Mesh(new THREE.CircleGeometry(.028, 12), new THREE.MeshBasicMaterial({color: 0x2FBF8F}));
+  pwrLed.position.set(1.82, .86, .072); mon.add(pwrLed);
 
-  /* keyboard */
-  const kb = new THREE.Group(); kb.position.set(-.8, deskTopY + .05, 1.0); kb.rotation.x = .05; grp.add(kb);
-  const kbBody = new THREE.Mesh(new THREE.BoxGeometry(2.7, .08, 1.0), new THREE.MeshStandardMaterial({color: 0xE8EDF5, roughness: .6})); kb.add(kbBody);
-  const kc2 = document.createElement("canvas"); kc2.width = 512; kc2.height = 190;
-  const k2 = kc2.getContext("2d"); k2.fillStyle = "#DDE6F2"; k2.fillRect(0, 0, 512, 190); k2.fillStyle = "#FFFFFF";
-  for (let r = 0; r < 4; r++) for (let c = 0; c < 13; c++) { k2.beginPath(); k2.roundRect(14 + c * 38, 12 + r * 36, 31, 28, 5); k2.fill(); }
-  k2.beginPath(); k2.roundRect(130, 152, 250, 28, 6); k2.fill();
-  const kbTex = new THREE.CanvasTexture(kc2); kbTex.colorSpace = THREE.SRGBColorSpace;
-  const kbTop = new THREE.Mesh(new THREE.PlaneGeometry(2.6, .92), new THREE.MeshStandardMaterial({map: kbTex, roughness: .6}));
-  kbTop.rotation.x = -Math.PI / 2; kbTop.position.y = .045; kb.add(kbTop);
+  /* keyboard — real 3D keys */
+  const kb = new THREE.Group(); kb.position.set(-.85, deskTopY + .045, 1.0); kb.rotation.x = .045; grp.add(kb);
+  const kbBody = shadowed(new THREE.Mesh(RB(2.75, .09, 1.02, .04), new THREE.MeshStandardMaterial({color: 0xE8EDF5, roughness: .5, metalness: .15}))); kb.add(kbBody);
+  const kMat = new THREE.MeshStandardMaterial({color: 0xFFFFFF, roughness: .45});
+  const kGeo = RB(.155, .05, .155, .02, 2);
+  const keyInst = new THREE.InstancedMesh(kGeo, kMat, 4 * 13);
+  const M4 = new THREE.Matrix4(); let n = 0;
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 13; c++) {
+    M4.setPosition(-1.14 + c * .19, .062, -.33 + r * .185);
+    keyInst.setMatrixAt(n++, M4);
+  }
+  keyInst.receiveShadow = true; kb.add(keyInst);
+  const space = new THREE.Mesh(RB(1.05, .05, .155, .02), kMat); space.position.set(-.1, .062, .40); kb.add(space);
 
-  /* mouse */
-  const mouse = new THREE.Mesh(new THREE.SphereGeometry(.17, 24, 18), new THREE.MeshStandardMaterial({color: 0xFF6B57, roughness: .35}));
-  mouse.scale.set(1, .55, 1.4); mouse.position.set(1.05, deskTopY + .09, 1.05); grp.add(mouse);
+  /* mouse — lathe-turned ergonomic shape + wheel */
+  const pts = [];
+  [[0, 0], [.115, 0], [.155, .02], [.168, .055], [.145, .095], [.095, .118], [.04, .128], [0, .128]].forEach(p => pts.push(new THREE.Vector2(p[0], p[1])));
+  const mouse = shadowed(new THREE.Mesh(new THREE.LatheGeometry(pts, 28), new THREE.MeshStandardMaterial({color: 0xFF6B57, roughness: .32, metalness: .1})));
+  mouse.scale.set(1, 1, 1.45); mouse.position.set(1.0, deskTopY + .035, 1.02); grp.add(mouse);
+  const wheel = new THREE.Mesh(new THREE.CylinderGeometry(.028, .028, .02, 14), ink);
+  wheel.rotation.z = Math.PI / 2; wheel.position.set(1.0, deskTopY + .135, .80); grp.add(wheel);
 
-  /* tower (the desktop PC) */
-  const tower = new THREE.Group(); tower.position.set(3.05, deskTopY, -.35); grp.add(tower);
-  const tBody = new THREE.Mesh(new THREE.BoxGeometry(1.05, 2.05, 2.1), ink); tBody.position.y = 1.03; tower.add(tBody);
-  const tGlass = new THREE.Mesh(new THREE.BoxGeometry(.04, 1.7, 1.7), new THREE.MeshStandardMaterial({color: 0x2F9BE8, roughness: .15, metalness: .4, transparent: true, opacity: .35}));
-  tGlass.position.set(-.54, 1.03, 0); tower.add(tGlass);
+  /* tower — glass front with glowing guts */
+  const tower = new THREE.Group(); tower.position.set(3.0, deskTopY, -.3); grp.add(tower);
+  const tBody = shadowed(new THREE.Mesh(RB(1.08, 2.06, 2.1, .05), ink)); tBody.position.y = 1.03; tower.add(tBody);
+  const gut = new THREE.Group(); gut.position.z = 1.02; tower.add(gut);
+  const gutBg = new THREE.Mesh(new THREE.PlaneGeometry(.86, 1.8), new THREE.MeshStandardMaterial({color: 0x141F38, roughness: .8}));
+  gutBg.position.set(0, 1.03, 0); gut.add(gutBg);
+  /* fan texture (ring + blades) drawn once, tinted per-fan and spun */
   const fc = document.createElement("canvas"); fc.width = fc.height = 256;
   const fx = fc.getContext("2d");
-  fx.fillStyle = "#141F38"; fx.fillRect(0, 0, 256, 256);
-  fx.strokeStyle = "#2F9BE8"; fx.lineWidth = 10; fx.beginPath(); fx.arc(128, 128, 100, 0, 6.283); fx.stroke();
-  fx.fillStyle = "#7CC4F5";
-  for (let i = 0; i < 7; i++) { fx.save(); fx.translate(128, 128); fx.rotate(i * 6.283 / 7); fx.beginPath(); fx.ellipse(0, -52, 20, 52, .5, 0, 6.283); fx.fill(); fx.restore(); }
-  fx.fillStyle = "#FFC531"; fx.beginPath(); fx.arc(128, 128, 26, 0, 6.283); fx.fill();
-  const fanTex = new THREE.CanvasTexture(fc); fanTex.colorSpace = THREE.SRGBColorSpace;
-  const fan = new THREE.Mesh(new THREE.CircleGeometry(.36, 36), new THREE.MeshBasicMaterial({map: fanTex}));
-  fan.position.set(0, 1.35, 1.06); tower.add(fan);
-  const pwr = new THREE.Mesh(new THREE.CircleGeometry(.07, 24), new THREE.MeshBasicMaterial({color: 0x2FBF8F}));
-  pwr.position.set(0, 1.92, 1.06); tower.add(pwr);
-  const led = new THREE.Mesh(new THREE.BoxGeometry(.6, .045, .02), new THREE.MeshBasicMaterial({color: 0xFFC531}));
-  led.position.set(0, .35, 1.06); tower.add(led);
-
-  /* small life: mug + books */
-  const mug = new THREE.Mesh(new THREE.CylinderGeometry(.14, .12, .26, 20), new THREE.MeshStandardMaterial({color: 0xFFC531, roughness: .5}));
-  mug.position.set(-3.3, deskTopY + .13, .75); grp.add(mug);
-  [[0x7C5CD6, 0], [0x2FBF8F, .09]].forEach(([c, y], i) => {
-    const book = new THREE.Mesh(new THREE.BoxGeometry(.95, .09, .7), new THREE.MeshStandardMaterial({color: c, roughness: .7}));
-    book.position.set(-3.35, deskTopY + .05 + y, -.5); book.rotation.y = i * .35; grp.add(book);
+  fx.strokeStyle = "#FFFFFF"; fx.lineWidth = 13; fx.beginPath(); fx.arc(128, 128, 104, 0, 6.283); fx.stroke();
+  fx.fillStyle = "#FFFFFF";
+  for (let i = 0; i < 7; i++) { fx.save(); fx.translate(128, 128); fx.rotate(i * 6.283 / 7); fx.beginPath(); fx.ellipse(0, -54, 21, 54, .5, 0, 6.283); fx.fill(); fx.restore(); }
+  fx.beginPath(); fx.arc(128, 128, 27, 0, 6.283); fx.fill();
+  const fanTex = new THREE.CanvasTexture(fc);
+  const fans = [];
+  [[.62, 0x2F9BE8], [1.42, 0xFF6B57]].forEach(([y, col]) => {
+    const f = new THREE.Mesh(new THREE.CircleGeometry(.30, 32), new THREE.MeshBasicMaterial({map: fanTex, transparent: true, color: col}));
+    f.position.set(0, y, .012); gut.add(f); fans.push(f);
   });
-  const sh = new THREE.Mesh(new THREE.PlaneGeometry(11, 4.4), new THREE.MeshBasicMaterial({color: 0x1C2B4A, transparent: true, opacity: .10}));
-  sh.rotation.x = -Math.PI / 2; sh.position.y = .01; scene.add(sh);
+  const gpu = new THREE.Mesh(RB(.7, .13, .03, .01), new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .4, metalness: .5}));
+  gpu.position.set(0, .18, .012); gut.add(gpu);
+  const gpuFan = new THREE.Mesh(new THREE.CircleGeometry(.05, 20), new THREE.MeshBasicMaterial({map: fanTex, transparent: true, color: 0x9FB4D8}));
+  gpuFan.position.set(-.18, .18, .03); gut.add(gpuFan); fans.push(gpuFan);
+  for (let i = 0; i < 3; i++) {
+    const ram = new THREE.Mesh(RB(.045, .5, .02, .008), new THREE.MeshStandardMaterial({color: 0x2FBF8F, roughness: .4, emissive: 0x2FBF8F, emissiveIntensity: .25}));
+    ram.position.set(.22 + i * .09, 1.05, .012); gut.add(ram);
+  }
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(.9, 1.86), new THREE.MeshPhysicalMaterial({color: 0xBEE3F8, transparent: true, opacity: .16, roughness: .08, metalness: 0, transmission: 0}));
+  glass.position.set(0, 1.03, 1.075); tower.add(glass);
+  const pwr = new THREE.Mesh(new THREE.TorusGeometry(.055, .014, 10, 24), new THREE.MeshBasicMaterial({color: 0x2FBF8F}));
+  pwr.position.set(.32, 1.93, 1.06); tower.add(pwr);
+  const ledStrip = new THREE.Mesh(RB(.62, .04, .015, .008), new THREE.MeshBasicMaterial({color: 0xFFC531}));
+  ledStrip.position.set(-.1, 1.93, 1.06); tower.add(ledStrip);
 
-  let visible = false;
-  new IntersectionObserver(es => es.forEach(e => visible = e.isIntersecting), {threshold: .12}).observe(canvas);
+  /* lamp, plant, mug, books */
+  const lampGrp = new THREE.Group(); lampGrp.position.set(-3.9, deskTopY, -.9); grp.add(lampGrp);
+  const lampBase = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.3, .34, .07, 24), ink)); lampBase.position.y = .035; lampGrp.add(lampBase);
+  const lampArm = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.045, .045, 1.7, 12), ink));
+  lampArm.position.set(.1, .85, 0); lampArm.rotation.z = -.28; lampGrp.add(lampArm);
+  const shade = new THREE.Mesh(new THREE.ConeGeometry(.34, .42, 24, 1, true), new THREE.MeshStandardMaterial({color: 0xFFC531, roughness: .5, side: THREE.DoubleSide}));
+  shade.position.set(.36, 1.72, 0); shade.rotation.z = .5; lampGrp.add(shade);
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(.07, 14, 12), new THREE.MeshBasicMaterial({color: 0xFFE9A8}));
+  bulb.position.set(.42, 1.62, 0); lampGrp.add(bulb);
+  const pot = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.17, .13, .3, 18), new THREE.MeshStandardMaterial({color: 0xFF6B57, roughness: .6})));
+  pot.position.set(-3.15, deskTopY + .15, .55); grp.add(pot);
+  [[0, .5, 0, .30], [.14, .68, .06, .22], [-.15, .64, -.05, .24]].forEach(([x, y, z, r]) => {
+    const leaf = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 12), new THREE.MeshStandardMaterial({color: 0x4CAF7D, roughness: .8}));
+    leaf.position.set(-3.15 + x, deskTopY + y, .55 + z); leaf.castShadow = true; grp.add(leaf);
+  });
+  const mug = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.13, .115, .25, 20), new THREE.MeshStandardMaterial({color: 0xFFC531, roughness: .45})));
+  mug.position.set(-2.2, deskTopY + .125, .8); grp.add(mug);
+  [[0x7C5CD6, 0], [0x2FBF8F, .095]].forEach(([c, y], i) => {
+    const book = shadowed(new THREE.Mesh(RB(.95, .09, .7, .02), new THREE.MeshStandardMaterial({color: c, roughness: .65})));
+    book.position.set(2.15, deskTopY + .045 + y, .95); book.rotation.y = i * .3 - .15; grp.add(book);
+  });
+
+  /* dust motes in the light */
+  const dustGeo = new THREE.BufferGeometry();
+  const dn = 70, dp = new Float32Array(dn * 3);
+  for (let i = 0; i < dn; i++) { dp[i * 3] = -4 + Math.random() * 8; dp[i * 3 + 1] = 1.4 + Math.random() * 2.6; dp[i * 3 + 2] = -1 + Math.random() * 3; }
+  dustGeo.setAttribute("position", new THREE.BufferAttribute(dp, 3));
+  const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({color: 0xFFE9A8, size: .035, transparent: true, opacity: .55, depthWrite: false}));
+  grp.add(dust);
+
+  const isVis = watch(canvas);
   new ResizeObserver(() => fitRenderer(renderer, cam, canvas)).observe(canvas);
   fitRenderer(renderer, cam, canvas);
-  let mx = 0;
-  addEventListener("pointermove", e => { mx = (e.clientX / innerWidth - .5); }, {passive: true});
-
   const clock = new THREE.Clock();
   (function loop() {
     requestAnimationFrame(loop);
-    if (!visible) return;
+    if (!isVis()) return;
     const dt = Math.min(clock.getDelta(), .05), now = performance.now(), t = clock.elapsedTime;
-    grp.rotation.y = REDUCED ? 0 : Math.sin(t * .3) * .035 + mx * .18;
-    fan.rotation.z -= dt * 2.4;
+    grp.rotation.y = REDUCED ? 0 : Math.sin(t * .3) * .03 + PTRX * .16;
+    fans.forEach((f, i) => f.rotation.z -= dt * (2 + i * .7));
+    ledStrip.material.color.setHSL((t * .05) % 1, .85, .6);
+    if (!REDUCED) { dust.rotation.y = t * .012; dust.position.y = Math.sin(t * .25) * .05; }
     drawScreen(now, dt);
     screenTex.needsUpdate = true;
+    renderer.render(scene, cam);
+  })();
+}
+
+/* ============================================================
+   DEVICES — tablet + phone, YoyliOS screens up close
+   ============================================================ */
+const devicesStage = document.getElementById("devicesStage");
+try { initDevices(); } catch(e) { devicesStage.classList.add("no-webgl"); }
+
+async function initDevices() {
+  const canvas = document.getElementById("devicesCanvas");
+  const renderer = makeRenderer(canvas);
+  const scene = new THREE.Scene();
+  stageEnv(renderer, scene);
+  const cam = new THREE.PerspectiveCamera(38, 16 / 10, .1, 100);
+  cam.position.set(0, 2.1, 6.6); cam.lookAt(0, .95, 0);
+  scene.add(new THREE.AmbientLight(0xffffff, .5));
+  const key = new THREE.DirectionalLight(0xffffff, 2.0);
+  key.position.set(3.5, 6.5, 5); key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 6;
+  key.shadow.camera.left = -5; key.shadow.camera.right = 5; key.shadow.camera.top = 5; key.shadow.camera.bottom = -3;
+  scene.add(key);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({opacity: .14}));
+  floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+
+  const grp = new THREE.Group(); scene.add(grp);
+  const table = shadowed(new THREE.Mesh(RB(8.6, .22, 3.4, .06), new THREE.MeshStandardMaterial({color: 0xBEE3F8, roughness: .6})));
+  table.position.y = -.11; grp.add(table);
+  const ink = new THREE.MeshStandardMaterial({color: 0x232F4D, roughness: .4, metalness: .35});
+
+  /* tablet screen: Little Play, alive with bubbles */
+  const tc = document.createElement("canvas"); tc.width = 1024; tc.height = 712;
+  const tx = tc.getContext("2d");
+  const tabImg = await loadImg("https://yoyli.com/img/s/animals.webp");
+  const tb = Array.from({length: 12}, () => ({x: Math.random() * 1024, y: Math.random() * 712, r: 5 + Math.random() * 13, s: .2 + Math.random() * .5, w: Math.random() * 6.28}));
+  function drawTablet(now, dt) {
+    fitDraw(tx, tabImg, 1024, 712);
+    tb.forEach(b => {
+      if (!REDUCED) { b.y -= b.s * dt * 22; b.x += Math.sin(now / 800 + b.w) * .3; if (b.y < -26) { b.y = 738; b.x = Math.random() * 1024; } }
+      tx.beginPath(); tx.arc(b.x, b.y, b.r, 0, 6.283);
+      tx.fillStyle = "rgba(255,255,255,.18)"; tx.fill(); tx.strokeStyle = "rgba(255,255,255,.5)"; tx.lineWidth = 2; tx.stroke();
+    });
+    tx.fillStyle = "rgba(18,28,52,.82)"; tx.beginPath(); tx.roundRect(24, 712 - 64, 330, 44, 22); tx.fill();
+    tx.fillStyle = "#fff"; tx.font = "800 24px Rubik, sans-serif"; tx.textAlign = "left"; tx.fillText("Little Play · Ages 2–4", 44, 712 - 35);
+  }
+  const tabTex = new THREE.CanvasTexture(tc); tabTex.colorSpace = THREE.SRGBColorSpace; tabTex.anisotropy = 4;
+
+  const tablet = new THREE.Group(); tablet.position.set(-1.15, 1.06, -.1); tablet.rotation.x = -.30; grp.add(tablet);
+  const tBody = shadowed(new THREE.Mesh(RB(3.15, 2.18, .11, .09), ink)); tablet.add(tBody);
+  const tScr = new THREE.Mesh(new THREE.PlaneGeometry(2.92, 1.95), new THREE.MeshBasicMaterial({map: tabTex}));
+  tScr.position.z = .058; tablet.add(tScr);
+  const tCam = new THREE.Mesh(new THREE.CircleGeometry(.02, 10), new THREE.MeshBasicMaterial({color: 0x3D5A80}));
+  tCam.position.set(0, .99, .058); tablet.add(tCam);
+  const stand = shadowed(new THREE.Mesh(RB(1.9, .09, .8, .03), ink));
+  stand.position.set(-1.15, .045, .28); stand.rotation.x = .35; grp.add(stand);
+
+  /* phone screen: profile picker, gentle pulse */
+  const pc = document.createElement("canvas"); pc.width = 560; pc.height = 1140;
+  const px = pc.getContext("2d");
+  const phImg = await loadImg("https://yoyli.com/img/s/who.webp");
+  function drawPhone(now) {
+    fitDraw(px, phImg, 560, 1140);
+    const pulse = REDUCED ? .5 : (Math.sin(now / 620) + 1) / 2;
+    px.strokeStyle = `rgba(255,197,49,${.35 + pulse * .45})`;
+    px.lineWidth = 7;
+    px.beginPath(); px.arc(280, 500, 120 + pulse * 16, 0, 6.283); px.stroke();
+    px.fillStyle = "rgba(18,28,52,.82)"; px.beginPath(); px.roundRect(30, 1140 - 92, 500, 60, 30); px.fill();
+    px.fillStyle = "#fff"; px.font = "800 27px Rubik, sans-serif"; px.textAlign = "center";
+    px.fillText("Who's using the computer?", 280, 1140 - 53);
+  }
+  const phTex = new THREE.CanvasTexture(pc); phTex.colorSpace = THREE.SRGBColorSpace; phTex.anisotropy = 4;
+
+  const phone = new THREE.Group(); phone.position.set(1.85, .92, .5); phone.rotation.set(-.13, -.38, .03); grp.add(phone);
+  const pBody = shadowed(new THREE.Mesh(RB(.98, 1.98, .1, .09), ink)); phone.add(pBody);
+  const pScr = new THREE.Mesh(new THREE.PlaneGeometry(.86, 1.78), new THREE.MeshBasicMaterial({map: phTex}));
+  pScr.position.z = .052; phone.add(pScr);
+  const notch = new THREE.Mesh(RB(.3, .05, .012, .02), new THREE.MeshBasicMaterial({color: 0x0A0F1D}));
+  notch.position.set(0, .86, .056); phone.add(notch);
+
+  /* pencil cup for scale + kid mood */
+  const cup = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.17, .14, .34, 18), new THREE.MeshStandardMaterial({color: 0xFFC531, roughness: .5})));
+  cup.position.set(3.1, .17, -.5); grp.add(cup);
+  [[0xFF6B57, -.2], [0x2F9BE8, .15], [0x2FBF8F, .35]].forEach(([c, rz], i) => {
+    const pencil = new THREE.Mesh(new THREE.CylinderGeometry(.028, .028, .55, 8), new THREE.MeshStandardMaterial({color: c, roughness: .55}));
+    pencil.position.set(3.1 + (i - 1) * .07, .55, -.5); pencil.rotation.z = rz; grp.add(pencil);
+  });
+  const blob = groundShadow(3.6, .45); blob.position.y = .005; scene.add(blob);
+
+  const isVis = watch(canvas);
+  new ResizeObserver(() => fitRenderer(renderer, cam, canvas)).observe(canvas);
+  fitRenderer(renderer, cam, canvas);
+  const clock = new THREE.Clock();
+  (function loop() {
+    requestAnimationFrame(loop);
+    if (!isVis()) return;
+    const dt = Math.min(clock.getDelta(), .05), now = performance.now(), t = clock.elapsedTime;
+    grp.rotation.y = REDUCED ? 0 : Math.sin(t * .35) * .045 + PTRX * .22;
+    tablet.rotation.z = REDUCED ? 0 : Math.sin(t * .7) * .008;
+    phone.position.y = .92 + (REDUCED ? 0 : Math.sin(t * 1.1) * .012);
+    drawTablet(now, dt);
+    tabTex.needsUpdate = true;
+    drawPhone(now);
+    phTex.needsUpdate = true;
     renderer.render(scene, cam);
   })();
 }
