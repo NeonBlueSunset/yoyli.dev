@@ -1031,10 +1031,10 @@ async function initDesk() {
   wheel.rotation.z = Math.PI / 2; wheel.position.set(1.0, deskTopY + .135, .80); grp.add(wheel);
 
   /* tower — glass front with glowing guts */
-  const tower = new THREE.Group(); tower.position.set(3.0, deskTopY, -.3); grp.add(tower);
+  const tower = new THREE.Group(); tower.position.set(3.5, deskTopY, -.3); tower.rotation.y = -.16; grp.add(tower);
   const tBody = shadowed(new THREE.Mesh(RB(1.08, 2.06, 2.1, .05), ink)); tBody.position.y = 1.03; tower.add(tBody);
   const gut = new THREE.Group(); gut.position.z = 1.062; tower.add(gut);
-  const gutBg = new THREE.Mesh(new THREE.PlaneGeometry(.86, 1.8), new THREE.MeshStandardMaterial({color: 0x141F38, roughness: .8}));
+  const gutBg = new THREE.Mesh(new THREE.PlaneGeometry(.86, 1.8), new THREE.MeshStandardMaterial({color: 0x24365E, roughness: .8}));
   gutBg.position.set(0, 1.03, 0); gut.add(gutBg);
   /* fan texture (ring + blades) drawn once, tinted per-fan and spun */
   const fc = document.createElement("canvas"); fc.width = fc.height = 256;
@@ -1046,7 +1046,7 @@ async function initDesk() {
   const fanTex = new THREE.CanvasTexture(fc);
   const fans = [];
   [[.62, 0x2F9BE8], [1.42, 0xFF6B57]].forEach(([y, col]) => {
-    const f = new THREE.Mesh(new THREE.CircleGeometry(.30, 32), new THREE.MeshBasicMaterial({map: fanTex, transparent: true, color: col}));
+    const f = new THREE.Mesh(new THREE.CircleGeometry(.34, 32), new THREE.MeshBasicMaterial({map: fanTex, transparent: true, color: col}));
     f.position.set(0, y, .012); gut.add(f); fans.push(f);
   });
   const gpu = new THREE.Mesh(RB(.7, .13, .03, .01), new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .4, metalness: .5}));
@@ -1057,7 +1057,7 @@ async function initDesk() {
     const ram = new THREE.Mesh(RB(.045, .5, .02, .008), new THREE.MeshStandardMaterial({color: 0x2FBF8F, roughness: .4, emissive: 0x2FBF8F, emissiveIntensity: .25}));
     ram.position.set(.22 + i * .09, 1.05, .012); gut.add(ram);
   }
-  const glass = new THREE.Mesh(new THREE.PlaneGeometry(.9, 1.86), new THREE.MeshPhysicalMaterial({color: 0xBEE3F8, transparent: true, opacity: .16, roughness: .08, metalness: 0, transmission: 0}));
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(.9, 1.86), new THREE.MeshPhysicalMaterial({color: 0xBEE3F8, transparent: true, opacity: .09, roughness: .08, metalness: 0, transmission: 0}));
   glass.position.set(0, 1.03, 1.115); tower.add(glass);
   const pwr = new THREE.Mesh(new THREE.TorusGeometry(.055, .014, 10, 24), new THREE.MeshBasicMaterial({color: 0x2FBF8F}));
   pwr.position.set(.32, 1.93, 1.10); tower.add(pwr);
@@ -1143,7 +1143,7 @@ async function initDevices() {
   const tc = document.createElement("canvas"); tc.width = 1440; tc.height = 844;
   const tx = tc.getContext("2d");
   const [homeImg, playImg] = await Promise.all([loadImg("https://yoyli.com/img/s/hero018-1200.webp"), loadImg("https://yoyli.com/img/s/animals.webp")]);
-  const tabA = makeFitted(homeImg, 1440, 844), tabB = makeFitted(playImg, 1440, 844, 1.22);
+  const tabA = makeFitted(homeImg, 1440, 844), tabB = makeFitted(playImg, 1440, 844, "saturate(1.3) contrast(1.14)");
   const tabLabels = ["Yoyli Home · the launcher", "Little Play · Ages 2–4"];
   let tabCur = 0, tabNext = 0, tabFade = 1, tabLast = performance.now();
   const tbub = Array.from({length: 10}, () => ({x: Math.random() * 1440, y: Math.random() * 844, r: 6 + Math.random() * 14, s: .2 + Math.random() * .5, w: Math.random() * 6.28}));
@@ -1181,10 +1181,10 @@ async function initDevices() {
   const tabStand = shadowed(new THREE.Mesh(RB(2.0, .09, .85, .03), new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .5, metalness: .4})));
   tabStand.position.set(-1.3, .045, .3); tabStand.rotation.x = .32; grp.add(tabStand);
   /* S Pen resting on the table */
-  const pen = new THREE.Group(); pen.position.set(-3.6, .035, .95); pen.rotation.y = .5; grp.add(pen);
-  const penBody = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.035, .035, 1.05, 12), new THREE.MeshStandardMaterial({color: 0x3D4E73, roughness: .4})));
+  const pen = new THREE.Group(); pen.position.set(-.45, .045, 1.38); pen.rotation.y = .9; grp.add(pen);
+  const penBody = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.052, .052, 1.1, 14), new THREE.MeshStandardMaterial({color: 0xFF6B57, roughness: .35})));
   penBody.rotation.z = Math.PI / 2; pen.add(penBody);
-  const penTip = new THREE.Mesh(new THREE.ConeGeometry(.035, .12, 12), new THREE.MeshStandardMaterial({color: 0x9FB4D8, roughness: .4}));
+  const penTip = new THREE.Mesh(new THREE.ConeGeometry(.052, .13, 14), new THREE.MeshStandardMaterial({color: 0xFFF3D6, roughness: .4}));
   penTip.rotation.z = Math.PI / 2; penTip.position.x = .58; pen.add(penTip);
 
   /* ---------- Galaxy S26 Ultra-class phone: boxy titanium, punch-hole, held landscape ---------- */

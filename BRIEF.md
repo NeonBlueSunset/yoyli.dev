@@ -50,6 +50,17 @@ Built on three foundations, studied in full (see STUDY-chimney.md, STUDY-torim.m
   ratio, low-poly primitives, graceful static-image fallback if WebGL fails,
   respect prefers-reduced-motion.
 
+## Games explorer pattern (Wave, 2026-11-10)
+- Wave's catch: by the time a visitor scrolls down to the game buttons, the
+  desk simulation has scrolled away — they tap games but can't SEE them change.
+  A regular user wouldn't understand what the buttons do.
+- Fix, now the section's structure: the 3D desk stays as the section opener;
+  below it a GAME EXPLORER — a sticky live mini-monitor (mirrors the desk
+  screen's feed in real time) pinned under the header while browsing, with the
+  games as descriptive cards grouped by age: "Ages 2–4 — first games" and
+  "Ages 5+ — real games". Rule for any playable picker: the screen must be
+  visible at the moment of choosing, always.
+
 ## V2 polish pass (Wave, 2026-11-10 — after seeing the prototype)
 - Higher quality everywhere: more polish, richer animations.
 - 3D quality: rounded geometry instead of blocky rectangles, simulation-grade
