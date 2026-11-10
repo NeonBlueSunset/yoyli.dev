@@ -122,36 +122,24 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .game-note{text-align:center;color:var(--ink-soft);margin-top:16px;font-weight:600}
 .game-note b{color:var(--ink)}
 
-/* ============ GAMES — fixed computer + chips, stacking card deck below ============ */
-.stage-sticky{position:sticky;top:84px;z-index:30;max-width:800px;margin:0 auto}
-.stage-sticky .game-note{margin-top:12px}
-.age-tabs{display:flex;gap:10px;margin-top:16px}
-.age-tab{flex:1;font-family:var(--font);font-weight:900;font-size:1.03rem;padding:.78em .3em;border-radius:999px;border:var(--border);background:#fff;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .13s,background .13s,color .13s}
-.age-tab:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+/* ============ GAMES — one compact player: screen, age chips, swipe rail ============ */
+.player-card{max-width:800px;margin:6px auto 0;background:#fff;border:var(--border);border-radius:26px;box-shadow:var(--shadow);padding:12px 12px 8px}
+.player-card .stage{box-shadow:none}
+.now-line{margin-top:12px;font-weight:700;font-size:1.02rem;text-align:center}
+.now-line b{font-weight:900}
+.age-tabs{display:flex;gap:8px;margin-top:12px}
+.age-tab{flex:1;font-family:var(--font);font-weight:900;font-size:.98rem;padding:.62em .3em;border-radius:999px;border:var(--border);background:var(--paper);color:var(--ink);cursor:pointer;transition:background .13s,color .13s}
 .age-tab.on{background:var(--ink);color:#fff}
-.age-sub{margin-top:12px;color:var(--ink-soft);font-weight:700;font-size:1rem;text-align:center}
-.deck{max-width:680px;margin:34px auto 0;padding-bottom:24vh}
-.dcard{margin-bottom:22px;position:sticky;top:calc(var(--deck-top, 360px) + var(--i, 0) * 14px);background:#fff;border:var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;cursor:pointer;text-align:left;font-family:var(--font);color:var(--ink);width:100%;padding:0;transition:box-shadow .15s}
-.dcard .band{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 18px;color:#fff}
-.dcard .band h4{font-size:1.12rem;color:#fff}
-.dcard .band .ages{font-size:.74rem;font-weight:900;letter-spacing:.08em;background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.65);padding:.22em .7em;border-radius:999px;white-space:nowrap}
-.dcard img{width:100%;aspect-ratio:16/8.2;object-fit:cover;display:block}
-.dcard .desc{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 18px 15px}
-.dcard .desc p{color:var(--ink-soft);font-weight:600;line-height:1.45}
-.dcard .play{flex:none;font-weight:900;font-size:.86rem;color:var(--sky-deep);white-space:nowrap}
-.dcard.on{box-shadow:0 0 0 4px var(--sun), var(--shadow)}
-@media(max-width:900px){
-  .stage-sticky{top:64px}
-  .age-tab{font-size:.95rem}
-  .deck{margin-top:26px}
-  .dcard{margin-bottom:18px}
-}
-@media(min-width:901px){
-  .stage-sticky{display:grid;grid-template-columns:520px 1fr;column-gap:28px;max-width:920px;align-items:start}
-  .stage-sticky .game-note{grid-column:1}
-  .stage-sticky .age-tabs{grid-column:2;grid-row:1;margin-top:6px}
-  .stage-sticky .age-sub{grid-column:2;grid-row:1;margin-top:74px;text-align:left}
-}
+.rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 2px 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.rail::-webkit-scrollbar{display:none}
+.thumb{flex:0 0 128px;scroll-snap-align:start;border:3px solid var(--ink);border-radius:16px;overflow:hidden;background:#fff;padding:0;cursor:pointer;font-family:var(--font);color:var(--ink);text-align:left;transition:transform .12s}
+.thumb:hover{transform:translateY(-2px)}
+.thumb img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+.thumb span{display:block;font-size:.82rem;font-weight:800;line-height:1.25;padding:7px 9px 8px}
+.thumb.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--sun)}
+.thumb.on span{background:var(--sun)}
+.rail-hint{margin:2px 4px 6px;color:var(--ink-soft);font-weight:600;font-size:.92rem;text-align:center}
+@media(min-width:901px){.thumb{flex-basis:158px}.thumb span{font-size:.9rem}}
 /* learn shelf */
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .chip{display:inline-flex;align-items:center;gap:.45em;background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:.42em 1em;font-weight:700;font-size:.95rem;box-shadow:3px 3px 0 var(--ink);transition:transform .15s}
@@ -336,20 +324,20 @@ section .wrap{position:relative;z-index:2}
       <h2>Games your kid can't get anywhere else</h2>
       <p class="lede" style="margin:0 auto">Original 3D games, made only for YoyliOS. No ads, no purchases, no "watch this to continue". Pick one — it's playing on the family computer.</p>
     </div>
-    <div class="stage-sticky">
-      <div class="stage rv" id="deskStage">
+    <div class="player-card rv">
+      <div class="stage" id="deskStage">
         <canvas class="webgl" id="deskCanvas" aria-label="A family computer with YoyliOS games playing on the screen"></canvas>
         <div class="fallback"><img src="https://yoyli.com/img/g/store-en-1400.webp" alt="Yoyli Games storefront"></div>
       </div>
-      <p class="game-note" id="gameNote"></p>
+      <p class="now-line" id="gameNote"></p>
       <div class="age-tabs" role="tablist" aria-label="Games by age">
         <button type="button" class="age-tab" data-g="0">Ages 2–4</button>
         <button type="button" class="age-tab on" data-g="1">Ages 5–8</button>
         <button type="button" class="age-tab" data-g="2">Ages 9–12</button>
       </div>
-      <p class="age-sub" id="ageSub"></p>
+      <div class="rail" id="gameRail" aria-label="Games in this age group"></div>
+      <p class="rail-hint">Swipe the games, tap one — it plays on the computer. <span id="ageSub"></span></p>
     </div>
-    <div class="deck" id="gameDeck"></div>
 
     <div class="rv">
       <h3 style="margin-top:44px;font-size:1.35rem">Yoyli Learn — 16 more games for school skills</h3>
@@ -580,47 +568,38 @@ const IMG = s => "https://yoyli.com/img/g/" + s + ".webp";
 /* learn chips */
 document.getElementById("learnChips").innerHTML = LEARN.map(n => `<span class="chip"><i></i>${n}</span>`).join("");
 
-/* games: three age tabs; each tab lists only its games; the one computer above plays them */
+/* games player: age chips swap the rail; tap a thumbnail — it plays on the computer */
 const AGE_GROUPS = [
-  {sub: "First games — no reading, no losing. Every tap answers.", games: [0, 1, 2, 3]},
-  {sub: "Real games — math races, letters, stars, fishing and more.", games: [4, 5, 8, 9]},
-  {sub: "For the big kids — code quests and time-travel strategy.", games: [6, 7]},
+  {sub: "First games — no reading, no losing.", games: [0, 1, 2, 3]},
+  {sub: "Real games — races, letters, stars, fishing.", games: [4, 5, 8, 9]},
+  {sub: "For the big kids — code and time quests.", games: [6, 7]},
 ];
 const note = document.getElementById("gameNote");
 const ageSub = document.getElementById("ageSub");
-const gameDeck = document.getElementById("gameDeck");
+const gameRail = document.getElementById("gameRail");
 const ageTabs = [...document.querySelectorAll(".age-tab")];
-const gamesSection = document.getElementById("games");
-const stickyZone = document.querySelector(".stage-sticky");
-const BAND_COLORS = ["#2F9BE8", "#FF6B57", "#7C5CFF", "#2FBF8F", "#E8930C"];
-let cards = {};
-function measureDeckTop() {
-  const top = parseFloat(getComputedStyle(stickyZone).top) || 84;
-  gamesSection.style.setProperty("--deck-top", (top + stickyZone.offsetHeight + 16) + "px");
-}
+let thumbs = {};
 function renderGroup(g) {
   ageTabs.forEach((t, j) => t.classList.toggle("on", j === g));
   ageSub.textContent = AGE_GROUPS[g].sub;
-  gameDeck.innerHTML = ""; cards = {};
-  AGE_GROUPS[g].games.forEach((i, k) => {
+  gameRail.innerHTML = ""; thumbs = {};
+  AGE_GROUPS[g].games.forEach(i => {
     const gm = GAMES[i];
     const b = document.createElement("button");
-    b.type = "button"; b.className = "dcard";
-    b.style.setProperty("--i", k);
-    b.innerHTML = `<span class="band" style="background:${BAND_COLORS[k % BAND_COLORS.length]}"><h4>${gm.n}</h4><span class="ages">AGES ${gm.age}</span></span><img loading="lazy" src="${IMG(gm.img)}" alt="${gm.n} — game screenshot"><span class="desc"><p>${gm.d}</p><span class="play">▶ on the computer</span></span>`;
+    b.type = "button"; b.className = "thumb";
+    b.innerHTML = `<img loading="lazy" src="${IMG(gm.img)}" alt="${gm.n}"><span>${gm.n}</span>`;
     b.addEventListener("click", () => { if (window.__deskGoTo) window.__deskGoTo(i); syncPicker(i); });
-    gameDeck.appendChild(b); cards[i] = b;
+    gameRail.appendChild(b); thumbs[i] = b;
   });
-  requestAnimationFrame(measureDeckTop);
+  gameRail.scrollTo({left: 0});
 }
 function syncPicker(i) {
-  Object.entries(cards).forEach(([j, b]) => b.classList.toggle("on", +j === i));
+  Object.entries(thumbs).forEach(([j, b]) => b.classList.toggle("on", +j === i));
   const g = GAMES[i];
   note.innerHTML = `Now playing: <b>${g.n}</b> · Ages ${g.age} — ${g.d}`;
-  requestAnimationFrame(measureDeckTop);
+  const t = thumbs[i];
+  if (t) gameRail.scrollTo({left: t.offsetLeft - gameRail.clientWidth / 2 + t.clientWidth / 2, behavior: "smooth"});
 }
-addEventListener("resize", () => requestAnimationFrame(measureDeckTop), {passive: true});
-setTimeout(measureDeckTop, 700);
 ageTabs.forEach((t, g) => t.addEventListener("click", () => {
   renderGroup(g);
   const first = AGE_GROUPS[g].games[0];
