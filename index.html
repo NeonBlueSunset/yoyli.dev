@@ -122,25 +122,35 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .game-note{text-align:center;color:var(--ink-soft);margin-top:16px;font-weight:600}
 .game-note b{color:var(--ink)}
 
-/* ============ GAMES — one sticky computer, age tabs, per-age list ============ */
-.games-layout{display:grid;grid-template-columns:1.18fr .86fr;gap:38px;align-items:start}
-.stage-sticky{position:sticky;top:94px}
-.stage-sticky .game-note{margin-top:14px}
-.age-tabs{display:flex;gap:10px}
+/* ============ GAMES — fixed computer + chips, stacking card deck below ============ */
+.stage-sticky{position:sticky;top:84px;z-index:30;max-width:800px;margin:0 auto}
+.stage-sticky .game-note{margin-top:12px}
+.age-tabs{display:flex;gap:10px;margin-top:16px}
 .age-tab{flex:1;font-family:var(--font);font-weight:900;font-size:1.03rem;padding:.78em .3em;border-radius:999px;border:var(--border);background:#fff;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .13s,background .13s,color .13s}
 .age-tab:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
 .age-tab.on{background:var(--ink);color:#fff}
-.age-sub{margin-top:16px;color:var(--ink-soft);font-weight:700;font-size:1.02rem}
-.game-list{display:grid;gap:12px;margin-top:14px}
-.gcard{text-align:left;background:#fff;border:var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:16px 18px;cursor:pointer;font-family:var(--font);color:var(--ink);transition:transform .13s,background .13s;display:block;width:100%}
-.gcard:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
-.gcard h4{font-size:1.06rem;margin-bottom:3px}
-.gcard p{color:var(--ink-soft);font-size:.93rem;font-weight:600;line-height:1.45}
-.gcard.on{background:var(--sun)}
+.age-sub{margin-top:12px;color:var(--ink-soft);font-weight:700;font-size:1rem;text-align:center}
+.deck{max-width:680px;margin:34px auto 0;padding-bottom:24vh}
+.dcard{margin-bottom:22px;position:sticky;top:calc(var(--deck-top, 360px) + var(--i, 0) * 14px);background:#fff;border:var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;cursor:pointer;text-align:left;font-family:var(--font);color:var(--ink);width:100%;padding:0;transition:box-shadow .15s}
+.dcard .band{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 18px;color:#fff}
+.dcard .band h4{font-size:1.12rem;color:#fff}
+.dcard .band .ages{font-size:.74rem;font-weight:900;letter-spacing:.08em;background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.65);padding:.22em .7em;border-radius:999px;white-space:nowrap}
+.dcard img{width:100%;aspect-ratio:16/8.2;object-fit:cover;display:block}
+.dcard .desc{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 18px 15px}
+.dcard .desc p{color:var(--ink-soft);font-weight:600;line-height:1.45}
+.dcard .play{flex:none;font-weight:900;font-size:.86rem;color:var(--sky-deep);white-space:nowrap}
+.dcard.on{box-shadow:0 0 0 4px var(--sun), var(--shadow)}
 @media(max-width:900px){
-  .games-layout{grid-template-columns:1fr;gap:22px}
-  .stage-sticky{top:66px;z-index:30}
+  .stage-sticky{top:64px}
   .age-tab{font-size:.95rem}
+  .deck{margin-top:26px}
+  .dcard{margin-bottom:18px}
+}
+@media(min-width:901px){
+  .stage-sticky{display:grid;grid-template-columns:520px 1fr;column-gap:28px;max-width:920px;align-items:start}
+  .stage-sticky .game-note{grid-column:1}
+  .stage-sticky .age-tabs{grid-column:2;grid-row:1;margin-top:6px}
+  .stage-sticky .age-sub{grid-column:2;grid-row:1;margin-top:74px;text-align:left}
 }
 /* learn shelf */
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
@@ -326,24 +336,20 @@ section .wrap{position:relative;z-index:2}
       <h2>Games your kid can't get anywhere else</h2>
       <p class="lede" style="margin:0 auto">Original 3D games, made only for YoyliOS. No ads, no purchases, no "watch this to continue". Pick one — it's playing on the family computer.</p>
     </div>
-    <div class="games-layout">
-      <div class="stage-sticky">
-        <div class="stage rv" id="deskStage">
-          <canvas class="webgl" id="deskCanvas" aria-label="A family computer with YoyliOS games playing on the screen"></canvas>
-          <div class="fallback"><img src="https://yoyli.com/img/g/store-en-1400.webp" alt="Yoyli Games storefront"></div>
-        </div>
-        <p class="game-note" id="gameNote"></p>
+    <div class="stage-sticky">
+      <div class="stage rv" id="deskStage">
+        <canvas class="webgl" id="deskCanvas" aria-label="A family computer with YoyliOS games playing on the screen"></canvas>
+        <div class="fallback"><img src="https://yoyli.com/img/g/store-en-1400.webp" alt="Yoyli Games storefront"></div>
       </div>
-      <div class="games-side">
-        <div class="age-tabs" role="tablist" aria-label="Games by age">
-          <button type="button" class="age-tab" data-g="0">Ages 2–4</button>
-          <button type="button" class="age-tab on" data-g="1">Ages 5–8</button>
-          <button type="button" class="age-tab" data-g="2">Ages 9–12</button>
-        </div>
-        <p class="age-sub" id="ageSub"></p>
-        <div class="game-list" id="gameList"></div>
+      <p class="game-note" id="gameNote"></p>
+      <div class="age-tabs" role="tablist" aria-label="Games by age">
+        <button type="button" class="age-tab" data-g="0">Ages 2–4</button>
+        <button type="button" class="age-tab on" data-g="1">Ages 5–8</button>
+        <button type="button" class="age-tab" data-g="2">Ages 9–12</button>
       </div>
+      <p class="age-sub" id="ageSub"></p>
     </div>
+    <div class="deck" id="gameDeck"></div>
 
     <div class="rv">
       <h3 style="margin-top:44px;font-size:1.35rem">Yoyli Learn — 16 more games for school skills</h3>
@@ -582,27 +588,39 @@ const AGE_GROUPS = [
 ];
 const note = document.getElementById("gameNote");
 const ageSub = document.getElementById("ageSub");
-const gameList = document.getElementById("gameList");
+const gameDeck = document.getElementById("gameDeck");
 const ageTabs = [...document.querySelectorAll(".age-tab")];
+const gamesSection = document.getElementById("games");
+const stickyZone = document.querySelector(".stage-sticky");
+const BAND_COLORS = ["#2F9BE8", "#FF6B57", "#7C5CFF", "#2FBF8F", "#E8930C"];
 let cards = {};
+function measureDeckTop() {
+  const top = parseFloat(getComputedStyle(stickyZone).top) || 84;
+  gamesSection.style.setProperty("--deck-top", (top + stickyZone.offsetHeight + 16) + "px");
+}
 function renderGroup(g) {
   ageTabs.forEach((t, j) => t.classList.toggle("on", j === g));
   ageSub.textContent = AGE_GROUPS[g].sub;
-  gameList.innerHTML = ""; cards = {};
-  AGE_GROUPS[g].games.forEach(i => {
+  gameDeck.innerHTML = ""; cards = {};
+  AGE_GROUPS[g].games.forEach((i, k) => {
     const gm = GAMES[i];
     const b = document.createElement("button");
-    b.type = "button"; b.className = "gcard";
-    b.innerHTML = `<h4>${gm.n}</h4><p>${gm.d}</p>`;
+    b.type = "button"; b.className = "dcard";
+    b.style.setProperty("--i", k);
+    b.innerHTML = `<span class="band" style="background:${BAND_COLORS[k % BAND_COLORS.length]}"><h4>${gm.n}</h4><span class="ages">AGES ${gm.age}</span></span><img loading="lazy" src="${IMG(gm.img)}" alt="${gm.n} — game screenshot"><span class="desc"><p>${gm.d}</p><span class="play">▶ on the computer</span></span>`;
     b.addEventListener("click", () => { if (window.__deskGoTo) window.__deskGoTo(i); syncPicker(i); });
-    gameList.appendChild(b); cards[i] = b;
+    gameDeck.appendChild(b); cards[i] = b;
   });
+  requestAnimationFrame(measureDeckTop);
 }
 function syncPicker(i) {
   Object.entries(cards).forEach(([j, b]) => b.classList.toggle("on", +j === i));
   const g = GAMES[i];
   note.innerHTML = `Now playing: <b>${g.n}</b> · Ages ${g.age} — ${g.d}`;
+  requestAnimationFrame(measureDeckTop);
 }
+addEventListener("resize", () => requestAnimationFrame(measureDeckTop), {passive: true});
+setTimeout(measureDeckTop, 700);
 ageTabs.forEach((t, g) => t.addEventListener("click", () => {
   renderGroup(g);
   const first = AGE_GROUPS[g].games[0];
