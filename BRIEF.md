@@ -62,9 +62,17 @@ Built on three foundations, studied in full (see STUDY-chimney.md, STUDY-torim.m
   one logo only — a fresh SVG robot mark (David's cute purple robot, redrawn
   clean in the site's toy style) + one "YoyliOS" wordmark. Never the raw
   logo.webp in a square, never logo + repeated name beside it.
-- New section coming: a tablet, and also a smartphone, as 3D simulations
-  showing YoyliOS screens up close. (YoyliOS itself runs on PC — the section
-  presents its screens on the devices for a closer look, captioned honestly.)
+- New section: a tablet and a smartphone as 3D simulations. CRITICAL framing
+  (Wave, 2026-11-10): on phone/tablet this is a FUTURE LAUNCHER — the
+  "YoyliOS Launcher" for Android — NOT the operating system. The OS is PC-only.
+  The section must say "coming soon / launcher" clearly; the devices show the
+  launcher's world (profiles, home, Little Play) as a preview. Never imply
+  YoyliOS-the-OS runs on phones or tablets.
+- Device identity matters (Wave): sculpt recognizable hardware — a Samsung
+  Galaxy Tab–class tablet (~12", 16:10) and a Galaxy S26 Ultra–class phone
+  (boxy titanium frame, punch-hole camera) at true proportions, and the
+  screens inside must be SHARP and clearly readable — pre-rendered fitted
+  screens, high texture resolution, no per-frame blur.
 
 ## Backgrounds — a kindergarten wall, all the way down (Wave, 2026-11-10)
 - The backgrounds are the kids' world: soft, innocent, user-friendly colors —

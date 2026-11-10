@@ -60,6 +60,16 @@ nav.main a{color:var(--ink);text-decoration:none}
 nav.main a:hover{color:var(--sky-deep);text-decoration:underline}
 header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-left:6px}
 @media(max-width:820px){nav.main{display:none}}
+@media(max-width:520px){
+  header.site .wrap{gap:10px;height:62px;padding:0 12px}
+  header.site .btn{white-space:nowrap;font-size:.86rem;min-height:42px;padding:.4em .75em;margin-left:auto}
+  .logo svg{width:36px;height:36px}
+  .logo .word{font-size:1.22rem}
+  .logo{gap:8px}
+}
+.soon-badge{position:absolute;top:14px;right:14px;z-index:3;background:var(--sun);border:var(--border);border-radius:999px;font-weight:900;font-size:.8rem;letter-spacing:.1em;padding:.45em 1em;box-shadow:var(--shadow-sm);transform:rotate(2.5deg)}
+.stage.tall canvas.webgl{aspect-ratio:16/11}
+@media(max-width:700px){.stage.tall canvas.webgl{aspect-ratio:1/1.02}}
 /* ============ HERO ============ */
 .hero{position:relative;padding:56px 0 84px;background:linear-gradient(180deg,var(--paper2),var(--paper));overflow:hidden}
 .hero .wrap{position:relative;z-index:2;text-align:center}
@@ -349,15 +359,16 @@ section .wrap{position:relative;z-index:2}
 <section id="screens" class="alt">
   <div class="wrap">
     <div class="sec-head center rv">
-      <span class="eyebrow">Up close</span>
-      <h2>The world your kid sees — up close</h2>
-      <p class="lede" style="margin:0 auto">Big friendly buttons, names they can read, nothing they can break. Here are YoyliOS's own screens on a tablet and a phone, so you can look at the details. YoyliOS itself runs on your PC.</p>
+      <span class="eyebrow">Coming soon · YoyliOS Launcher</span>
+      <h2>Next: the YoyliOS Launcher for tablet &amp; phone</h2>
+      <p class="lede" style="margin:0 auto">YoyliOS the system lives on your PC. Coming next is the <b>YoyliOS Launcher</b> — an Android launcher that brings the same world to the tablet and phone your kids already hold: their own profile, their own home screen, the same parent rules. Not an operating system — a launcher, and it's on its way.</p>
     </div>
-    <div class="stage rv" id="devicesStage">
-      <canvas class="webgl" id="devicesCanvas" aria-label="A tablet and a phone showing YoyliOS screens up close"></canvas>
+    <div class="stage rv tall" id="devicesStage">
+      <canvas class="webgl" id="devicesCanvas" aria-label="A tablet and a smartphone showing the upcoming YoyliOS Launcher"></canvas>
       <div class="fallback"><img src="https://yoyli.com/img/s/animals.webp" alt="Little Play activities for ages 2 to 4"></div>
+      <div class="soon-badge">COMING SOON · LAUNCHER</div>
     </div>
-    <p class="game-note rv">On the tablet: <b>Little Play</b> (ages 2–4) — tap, hear, play, no reading needed. On the phone: <b>"Who's using the computer?"</b> — every kid taps their own face and lands in their own world.</p>
+    <p class="game-note rv">A first look at the launcher: on the tablet, the <b>Yoyli home screen</b> and <b>Little Play</b> (ages 2–4). On the phone, <b>"Who's playing?"</b> — every kid taps their own face and lands in their own world.</p>
   </div>
 </section>
 
@@ -628,9 +639,24 @@ function fitDraw(ctx, img, W, H, dx = 0) {
   const w = img.naturalWidth * s, h = img.naturalHeight * s;
   ctx.drawImage(img, dx + (W - w) / 2, (H - h) / 2, w, h);
 }
-function makeRenderer(canvas) {
+/* Pre-rendered fitted screen: computed ONCE, so screens stay sharp and frames stay cheap */
+function makeFitted(img, W, H, sat) {
+  const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d");
+  if (!img) { x.fillStyle = "#2F9BE8"; x.fillRect(0, 0, W, H); return c; }
+  const cs = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+  x.save(); x.filter = "blur(16px) brightness(.94)";
+  x.drawImage(img, (W - img.naturalWidth * cs) / 2 - 24, (H - img.naturalHeight * cs) / 2 - 24, img.naturalWidth * cs + 48, img.naturalHeight * cs + 48);
+  x.restore();
+  const s = Math.min(W / img.naturalWidth, H / img.naturalHeight);
+  x.save(); if (sat) x.filter = `saturate(${sat}) contrast(1.04)`;
+  x.drawImage(img, (W - img.naturalWidth * s) / 2, (H - img.naturalHeight * s) / 2, img.naturalWidth * s, img.naturalHeight * s);
+  x.restore();
+  return c;
+}
+function makeRenderer(canvas, cap = 1.75) {
   const r = new THREE.WebGLRenderer({canvas, antialias: true, alpha: true});
-  r.setPixelRatio(Math.min(devicePixelRatio, 1.6));
+  r.setPixelRatio(Math.min(devicePixelRatio, cap));
   r.shadowMap.enabled = true;
   r.shadowMap.type = THREE.PCFSoftShadowMap;
   r.toneMapping = THREE.ACESFilmicToneMapping;
@@ -693,6 +719,7 @@ async function initLaptop() {
   const bc = document.createElement("canvas"); bc.width = 1024; bc.height = 620;
   const bx = bc.getContext("2d");
   const osImg = await loadImg("https://yoyli.com/img/s/hero018-1200.webp");
+  const osFitted = makeFitted(osImg, 1024, 620);
   const LINES = ["YoyliOS bootloader · v0.1.16","Checking memory ............ OK","Loading kernel ............. OK","Starting graphics .......... OK","Mounting games ............. OK","Starting Robo .............. OK","Welcome to YoyliOS!"];
   let bootStart = null;
   function drawBoot(now) {
@@ -717,7 +744,7 @@ async function initLaptop() {
       return;
     }
     const f = Math.min(1, (t - bootDur) / fadeDur);
-    fitDraw(bx, osImg, W, H);
+    bx.drawImage(osFitted, 0, 0);
     if (f < 1) { bx.fillStyle = `rgba(11,20,40,${1 - f})`; bx.fillRect(0, 0, W, H); }
     const sweep = ((now / 4200) % 1.4) - .2;
     const g = bx.createLinearGradient(W * sweep - 200, 0, W * sweep + 200, H);
@@ -872,6 +899,7 @@ async function initDesk() {
   const sc = document.createElement("canvas"); sc.width = 1024; sc.height = 576;
   const sx = sc.getContext("2d");
   const imgs = await Promise.all(GAMES.map(g => loadImg(IMG(g.img))));
+  const fitted = imgs.map(im => makeFitted(im, 1024, 576));
   let cur = 4, nxt = 4, slideT = 1, lastSwitch = performance.now();
   const bubbles = Array.from({length: 16}, () => ({x: Math.random() * 1024, y: Math.random() * 576, r: 6 + Math.random() * 16, s: .25 + Math.random() * .6, w: Math.random() * 6.28}));
   function goTo(i) { if (i !== cur && slideT >= 1) { nxt = i; slideT = 0; lastSwitch = performance.now(); } }
@@ -882,9 +910,9 @@ async function initDesk() {
     if (slideT < 1) {
       slideT = Math.min(1, slideT + dt / .75);
       const e = 1 - Math.pow(1 - slideT, 3), off = -e * W;
-      fitDraw(sx, imgs[cur], W, H, off); fitDraw(sx, imgs[nxt], W, H, off + W);
+      sx.drawImage(fitted[cur], off, 0); sx.drawImage(fitted[nxt], off + W, 0);
       if (slideT >= 1) cur = nxt;
-    } else fitDraw(sx, imgs[cur], W, H, 0);
+    } else sx.drawImage(fitted[cur], 0, 0);
     bubbles.forEach(b => {
       if (!REDUCED) { b.y -= b.s * dt * 27; b.x += Math.sin(now / 700 + b.w) * .35; if (b.y < -30) { b.y = H + 30; b.x = Math.random() * W; } }
       sx.beginPath(); sx.arc(b.x, b.y, b.r, 0, 6.283);
@@ -1024,13 +1052,13 @@ try { initDevices(); } catch(e) { devicesStage.classList.add("no-webgl"); }
 
 async function initDevices() {
   const canvas = document.getElementById("devicesCanvas");
-  const renderer = makeRenderer(canvas);
+  const renderer = makeRenderer(canvas, 2);
   const scene = new THREE.Scene();
   stageEnv(renderer, scene);
-  const cam = new THREE.PerspectiveCamera(38, 16 / 10, .1, 100);
-  cam.position.set(0, 2.1, 6.6); cam.lookAt(0, .95, 0);
+  const cam = new THREE.PerspectiveCamera(35, 16 / 11, .1, 100);
+  cam.position.set(0, 2.0, 6.2); cam.lookAt(0, .92, 0);
   scene.add(new THREE.AmbientLight(0xffffff, .5));
-  const key = new THREE.DirectionalLight(0xffffff, 2.0);
+  const key = new THREE.DirectionalLight(0xffffff, 2.1);
   key.position.set(3.5, 6.5, 5); key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 6;
   key.shadow.camera.left = -5; key.shadow.camera.right = 5; key.shadow.camera.top = 5; key.shadow.camera.bottom = -3;
@@ -1039,69 +1067,102 @@ async function initDevices() {
   floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
 
   const grp = new THREE.Group(); scene.add(grp);
-  const table = shadowed(new THREE.Mesh(RB(8.6, .22, 3.4, .06), new THREE.MeshStandardMaterial({color: 0x7FB8E8, roughness: .5})));
+  const table = shadowed(new THREE.Mesh(RB(9.2, .22, 3.6, .06), new THREE.MeshStandardMaterial({color: 0x7FB8E8, roughness: .5})));
   table.position.y = -.11; grp.add(table);
-  const ink = new THREE.MeshStandardMaterial({color: 0x232F4D, roughness: .4, metalness: .35});
 
-  /* tablet screen: Little Play, alive with bubbles */
-  const tc = document.createElement("canvas"); tc.width = 1024; tc.height = 712;
+  /* ---------- Galaxy Tab-class tablet: silver unibody, 16:10, slim black bezels ---------- */
+  const silver = new THREE.MeshStandardMaterial({color: 0xC9D2DE, roughness: .34, metalness: .72});
+  const tc = document.createElement("canvas"); tc.width = 1440; tc.height = 844;
   const tx = tc.getContext("2d");
-  const tabImg = await loadImg("https://yoyli.com/img/s/animals.webp");
-  const tb = Array.from({length: 12}, () => ({x: Math.random() * 1024, y: Math.random() * 712, r: 5 + Math.random() * 13, s: .2 + Math.random() * .5, w: Math.random() * 6.28}));
+  const [homeImg, playImg] = await Promise.all([loadImg("https://yoyli.com/img/s/hero018-1200.webp"), loadImg("https://yoyli.com/img/s/animals.webp")]);
+  const tabA = makeFitted(homeImg, 1440, 844), tabB = makeFitted(playImg, 1440, 844, 1.22);
+  const tabLabels = ["Yoyli Home · the launcher", "Little Play · Ages 2–4"];
+  let tabCur = 0, tabNext = 0, tabFade = 1, tabLast = performance.now();
+  const tbub = Array.from({length: 10}, () => ({x: Math.random() * 1440, y: Math.random() * 844, r: 6 + Math.random() * 14, s: .2 + Math.random() * .5, w: Math.random() * 6.28}));
   function drawTablet(now, dt) {
-    fitDraw(tx, tabImg, 1024, 712);
-    tb.forEach(b => {
-      if (!REDUCED) { b.y -= b.s * dt * 22; b.x += Math.sin(now / 800 + b.w) * .3; if (b.y < -26) { b.y = 738; b.x = Math.random() * 1024; } }
+    if (!REDUCED && now - tabLast > 5200 && tabFade >= 1) { tabNext = 1 - tabCur; tabFade = 0; tabLast = now; }
+    if (tabFade < 1) {
+      tabFade = Math.min(1, tabFade + dt / .8);
+      tx.drawImage(tabCur ? tabB : tabA, 0, 0);
+      tx.globalAlpha = tabFade; tx.drawImage(tabNext ? tabB : tabA, 0, 0); tx.globalAlpha = 1;
+      if (tabFade >= 1) tabCur = tabNext;
+    } else tx.drawImage(tabCur ? tabB : tabA, 0, 0);
+    tbub.forEach(b => {
+      if (!REDUCED) { b.y -= b.s * dt * 26; b.x += Math.sin(now / 800 + b.w) * .3; if (b.y < -28) { b.y = 872; b.x = Math.random() * 1440; } }
       tx.beginPath(); tx.arc(b.x, b.y, b.r, 0, 6.283);
-      tx.fillStyle = "rgba(255,255,255,.18)"; tx.fill(); tx.strokeStyle = "rgba(255,255,255,.5)"; tx.lineWidth = 2; tx.stroke();
+      tx.fillStyle = "rgba(255,255,255,.16)"; tx.fill(); tx.strokeStyle = "rgba(255,255,255,.45)"; tx.lineWidth = 2; tx.stroke();
     });
-    tx.fillStyle = "rgba(18,28,52,.82)"; tx.beginPath(); tx.roundRect(24, 712 - 64, 330, 44, 22); tx.fill();
-    tx.fillStyle = "#fff"; tx.font = "800 24px Rubik, sans-serif"; tx.textAlign = "left"; tx.fillText("Little Play · Ages 2–4", 44, 712 - 35);
+    tx.fillStyle = "rgba(18,28,52,.85)"; tx.beginPath(); tx.roundRect(30, 844 - 74, 470, 52, 26); tx.fill();
+    tx.fillStyle = "#fff"; tx.font = "800 27px Rubik, sans-serif"; tx.textAlign = "left"; tx.fillText(tabLabels[tabCur], 54, 844 - 39);
   }
-  const tabTex = new THREE.CanvasTexture(tc); tabTex.colorSpace = THREE.SRGBColorSpace; tabTex.anisotropy = 4;
+  const tabTex = new THREE.CanvasTexture(tc); tabTex.colorSpace = THREE.SRGBColorSpace; tabTex.anisotropy = 8;
 
-  const tablet = new THREE.Group(); tablet.position.set(-1.15, 1.06, -.1); tablet.rotation.x = -.30; grp.add(tablet);
-  const tBody = shadowed(new THREE.Mesh(RB(3.15, 2.18, .11, .09), ink)); tablet.add(tBody);
-  const tScr = new THREE.Mesh(new THREE.PlaneGeometry(2.92, 1.95), new THREE.MeshBasicMaterial({map: tabTex}));
-  tScr.position.z = .058; tablet.add(tScr);
-  const tCam = new THREE.Mesh(new THREE.CircleGeometry(.02, 10), new THREE.MeshBasicMaterial({color: 0x3D5A80}));
-  tCam.position.set(0, .99, .058); tablet.add(tCam);
-  const stand = shadowed(new THREE.Mesh(RB(1.9, .09, .8, .03), ink));
-  stand.position.set(-1.15, .045, .28); stand.rotation.x = .35; grp.add(stand);
+  const tab = new THREE.Group(); tab.position.set(-1.3, 1.14, -.15); tab.rotation.x = -.27; grp.add(tab);
+  const tabBody = shadowed(new THREE.Mesh(RB(3.55, 2.2, .1, .05), silver)); tab.add(tabBody);
+  const tabBezel = new THREE.Mesh(RB(3.4, 2.05, .02, .035), new THREE.MeshStandardMaterial({color: 0x0A0F1D, roughness: .25, metalness: .3}));
+  tabBezel.position.z = .045; tab.add(tabBezel);
+  const tabScr = new THREE.Mesh(new THREE.PlaneGeometry(3.27, 1.92), new THREE.MeshBasicMaterial({map: tabTex}));
+  tabScr.position.z = .058; tab.add(tabScr);
+  const tabCam = new THREE.Mesh(new THREE.CircleGeometry(.02, 12), new THREE.MeshBasicMaterial({color: 0x33507A}));
+  tabCam.position.set(0, .955, .058); tab.add(tabCam);
+  /* top-edge buttons (power + volume), like the real thing */
+  [[-.5, .16], [-.18, .3]].forEach(([x, w]) => {
+    const btn = new THREE.Mesh(RB(w, .025, .06, .008), silver);
+    btn.position.set(x, 1.11, 0); tab.add(btn);
+  });
+  const tabStand = shadowed(new THREE.Mesh(RB(2.0, .09, .85, .03), new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .5, metalness: .4})));
+  tabStand.position.set(-1.3, .045, .3); tabStand.rotation.x = .32; grp.add(tabStand);
+  /* S Pen resting on the table */
+  const pen = new THREE.Group(); pen.position.set(-3.6, .035, .95); pen.rotation.y = .5; grp.add(pen);
+  const penBody = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.035, .035, 1.05, 12), new THREE.MeshStandardMaterial({color: 0x3D4E73, roughness: .4})));
+  penBody.rotation.z = Math.PI / 2; pen.add(penBody);
+  const penTip = new THREE.Mesh(new THREE.ConeGeometry(.035, .12, 12), new THREE.MeshStandardMaterial({color: 0x9FB4D8, roughness: .4}));
+  penTip.rotation.z = Math.PI / 2; penTip.position.x = .58; pen.add(penTip);
 
-  /* phone screen (held landscape, like a kid would): profile picker, full and crisp */
-  const pc = document.createElement("canvas"); pc.width = 1024; pc.height = 576;
-  const px = pc.getContext("2d");
-  const phImg = await loadImg("https://yoyli.com/img/s/who.webp");
+  /* ---------- Galaxy S26 Ultra-class phone: boxy titanium, punch-hole, held landscape ---------- */
+  const titanium = new THREE.MeshStandardMaterial({color: 0xB7BCC8, roughness: .3, metalness: .82});
+  const pc2 = document.createElement("canvas"); pc2.width = 1280; pc2.height = 570;
+  const px2 = pc2.getContext("2d");
+  const whoImg = await loadImg("https://yoyli.com/img/s/who.webp");
+  const whoFitted = makeFitted(whoImg, 1280, 570);
   function drawPhone(now) {
-    fitDraw(px, phImg, 1024, 576);
+    px2.drawImage(whoFitted, 0, 0);
     const sweep = ((now / 4600) % 1.5) - .25;
-    const g = px.createLinearGradient(1024 * sweep - 220, 0, 1024 * sweep + 220, 576);
-    g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(.5, "rgba(255,255,255,.10)"); g.addColorStop(1, "rgba(255,255,255,0)");
-    px.fillStyle = g; px.fillRect(0, 0, 1024, 576);
-    px.fillStyle = "rgba(18,28,52,.82)"; px.beginPath(); px.roundRect(262, 576 - 58, 500, 42, 21); px.fill();
-    px.fillStyle = "#fff"; px.font = "800 24px Rubik, sans-serif"; px.textAlign = "center";
-    px.fillText("Who's using the computer?", 512, 576 - 29);
+    const g = px2.createLinearGradient(1280 * sweep - 260, 0, 1280 * sweep + 260, 570);
+    g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(.5, "rgba(255,255,255,.09)"); g.addColorStop(1, "rgba(255,255,255,0)");
+    px2.fillStyle = g; px2.fillRect(0, 0, 1280, 570);
+    px2.fillStyle = "rgba(18,28,52,.85)"; px2.beginPath(); px2.roundRect(390, 570 - 56, 500, 42, 21); px2.fill();
+    px2.fillStyle = "#fff"; px2.font = "800 24px Rubik, sans-serif"; px2.textAlign = "center";
+    px2.fillText("Who's playing? · YoyliOS Launcher", 640, 570 - 27);
   }
-  const phTex = new THREE.CanvasTexture(pc); phTex.colorSpace = THREE.SRGBColorSpace; phTex.anisotropy = 4;
+  const phTex = new THREE.CanvasTexture(pc2); phTex.colorSpace = THREE.SRGBColorSpace; phTex.anisotropy = 8;
 
-  const phone = new THREE.Group(); phone.position.set(1.95, .62, .55); phone.rotation.set(-.22, -.34, .05); grp.add(phone);
-  const pBody = shadowed(new THREE.Mesh(RB(1.98, .99, .1, .09), ink)); phone.add(pBody);
-  const pScr = new THREE.Mesh(new THREE.PlaneGeometry(1.80, .84), new THREE.MeshBasicMaterial({map: phTex}));
-  pScr.position.z = .052; phone.add(pScr);
-  const notch = new THREE.Mesh(RB(.05, .3, .012, .02), new THREE.MeshBasicMaterial({color: 0x0A0F1D}));
-  notch.position.set(-.90, 0, .056); phone.add(notch);
-  const pStand = shadowed(new THREE.Mesh(RB(1.2, .08, .55, .03), ink));
-  pStand.position.set(1.95, .04, .72); pStand.rotation.x = .3; grp.add(pStand);
+  const ph = new THREE.Group(); ph.position.set(2.05, .60, .62); ph.rotation.set(-.2, -.33, .04); grp.add(ph);
+  const phBody = shadowed(new THREE.Mesh(RB(2.3, 1.12, .09, .032), titanium)); ph.add(phBody);
+  const phBezel = new THREE.Mesh(RB(2.21, 1.03, .015, .02), new THREE.MeshStandardMaterial({color: 0x0A0F1D, roughness: .25}));
+  phBezel.position.z = .04; ph.add(phBezel);
+  const phScr = new THREE.Mesh(new THREE.PlaneGeometry(2.14, .95), new THREE.MeshBasicMaterial({map: phTex}));
+  phScr.position.z = .05; ph.add(phScr);
+  const punch = new THREE.Mesh(new THREE.CircleGeometry(.021, 14), new THREE.MeshBasicMaterial({color: 0x0A0F1D}));
+  punch.position.set(-.82, .31, .052); ph.add(punch);
+  const punchRing = new THREE.Mesh(new THREE.TorusGeometry(.026, .004, 8, 20), new THREE.MeshBasicMaterial({color: 0x8FA0C4}));
+  punchRing.position.set(-.82, .31, .052); ph.add(punchRing);
+  /* side keys on the top edge (volume + power) */
+  [[.45, .34], [.88, .18]].forEach(([x, w]) => {
+    const b = new THREE.Mesh(RB(w, .022, .05, .008), titanium);
+    b.position.set(x, .568, 0); ph.add(b);
+  });
+  const phStand = shadowed(new THREE.Mesh(RB(1.3, .08, .55, .03), new THREE.MeshStandardMaterial({color: 0x2A3854, roughness: .5, metalness: .4})));
+  phStand.position.set(2.05, .04, .82); phStand.rotation.x = .3; grp.add(phStand);
 
-  /* pencil cup for scale + kid mood */
+  /* pencil cup */
   const cup = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(.17, .14, .34, 18), new THREE.MeshStandardMaterial({color: 0xFFC531, roughness: .5})));
-  cup.position.set(3.1, .17, -.5); grp.add(cup);
+  cup.position.set(3.5, .17, -.55); grp.add(cup);
   [[0xFF6B57, -.2], [0x2F9BE8, .15], [0x2FBF8F, .35]].forEach(([c, rz], i) => {
     const pencil = new THREE.Mesh(new THREE.CylinderGeometry(.028, .028, .55, 8), new THREE.MeshStandardMaterial({color: c, roughness: .55}));
-    pencil.position.set(3.1 + (i - 1) * .07, .55, -.5); pencil.rotation.z = rz; grp.add(pencil);
+    pencil.position.set(3.5 + (i - 1) * .07, .55, -.55); pencil.rotation.z = rz; grp.add(pencil);
   });
-  const blob = groundShadow(3.6, .45); blob.position.y = .005; scene.add(blob);
+  const blob = groundShadow(3.8, .45); blob.position.y = .005; scene.add(blob);
 
   const isVis = watch(canvas);
   new ResizeObserver(() => fitRenderer(renderer, cam, canvas)).observe(canvas);
@@ -1111,9 +1172,9 @@ async function initDevices() {
     requestAnimationFrame(loop);
     if (!isVis()) return;
     const dt = Math.min(clock.getDelta(), .05), now = performance.now(), t = clock.elapsedTime;
-    grp.rotation.y = REDUCED ? 0 : Math.sin(t * .35) * .045 + PTRX * .22;
-    tablet.rotation.z = REDUCED ? 0 : Math.sin(t * .7) * .008;
-    phone.position.y = .62 + (REDUCED ? 0 : Math.sin(t * 1.1) * .012);
+    grp.rotation.y = REDUCED ? 0 : Math.sin(t * .35) * .04 + PTRX * .2;
+    tab.rotation.z = REDUCED ? 0 : Math.sin(t * .7) * .006;
+    ph.position.y = .60 + (REDUCED ? 0 : Math.sin(t * 1.1) * .01);
     drawTablet(now, dt);
     tabTex.needsUpdate = true;
     drawPhone(now);
