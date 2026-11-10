@@ -968,18 +968,18 @@ async function initDesk() {
   const sx = sc.getContext("2d");
   const imgs = await Promise.all(GAMES.map(g => loadImg(IMG(g.img))));
   const fitted = imgs.map(im => makeFitted(im, 1024, 576));
-  let cur = 4, nxt = 4, slideT = 1, lastSwitch = performance.now();
+  let cur = 4, nxt = 4, slideT = 1, lastSwitch = performance.now(), holdUntil = 0;
   const bubbles = Array.from({length: 16}, () => ({x: Math.random() * 1024, y: Math.random() * 576, r: 6 + Math.random() * 16, s: .25 + Math.random() * .6, w: Math.random() * 6.28}));
-  function goTo(i) { if (slideT < 1) { cur = nxt; slideT = 1; } if (i !== cur) { nxt = i; slideT = 0; lastSwitch = performance.now(); } }
+  function goTo(i) { if (slideT < 1) { cur = nxt; slideT = 1; } if (i !== cur) { nxt = i; slideT = 0; lastSwitch = performance.now(); } holdUntil = performance.now() + 20000; }
   window.__deskGoTo = goTo;
   function drawScreen(now, dt) {
     const W = 1024, H = 576;
-    if (!REDUCED && now - lastSwitch > 3600 && slideT >= 1) { nxt = (cur + 1) % GAMES.length; slideT = 0; lastSwitch = now; window.__syncPicker && window.__syncPicker(nxt); }
+    if (!REDUCED && now - lastSwitch > 3600 && slideT >= 1 && now > holdUntil) { nxt = (cur + 1) % GAMES.length; slideT = 0; lastSwitch = now; }
     if (slideT < 1) {
       slideT = Math.min(1, slideT + dt / .75);
       const e = 1 - Math.pow(1 - slideT, 3), off = -e * W;
       sx.drawImage(fitted[cur], off, 0); sx.drawImage(fitted[nxt], off + W, 0);
-      if (slideT >= 1) cur = nxt;
+      if (slideT >= 1) { cur = nxt; window.__syncPicker && window.__syncPicker(cur); }
     } else sx.drawImage(fitted[cur], 0, 0);
     bubbles.forEach(b => {
       if (!REDUCED) { b.y -= b.s * dt * 27; b.x += Math.sin(now / 700 + b.w) * .35; if (b.y < -30) { b.y = H + 30; b.x = Math.random() * W; } }
@@ -987,7 +987,7 @@ async function initDesk() {
       sx.fillStyle = "rgba(255,255,255,.20)"; sx.fill(); sx.strokeStyle = "rgba(255,255,255,.55)"; sx.lineWidth = 2; sx.stroke();
       sx.beginPath(); sx.arc(b.x - b.r * .35, b.y - b.r * .35, b.r * .28, 0, 6.283); sx.fillStyle = "rgba(255,255,255,.5)"; sx.fill();
     });
-    const g = GAMES[cur];
+    const g = GAMES[slideT < 1 && slideT > .5 ? nxt : cur];
     sx.fillStyle = "rgba(18,28,52,.85)"; sx.fillRect(0, H - 66, W, 66);
     sx.fillStyle = "#fff"; sx.font = "800 30px Rubik, sans-serif"; sx.textAlign = "left"; sx.fillText(g.n, 26, H - 24);
     sx.fillStyle = "#FFC531"; sx.beginPath(); sx.roundRect(W - 178, H - 50, 150, 36, 18); sx.fill();
