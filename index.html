@@ -121,6 +121,27 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
 .picker .age{align-self:center;font-weight:800;color:var(--muted);font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;margin:0 2px 0 10px}
 .game-note{text-align:center;color:var(--ink-soft);margin-top:16px;font-weight:600}
 .game-note b{color:var(--ink)}
+
+/* ============ GAME EXPLORER — the screen stays with you ============ */
+.explorer{margin-top:30px}
+.mini-wrap{position:sticky;top:80px;z-index:6;max-width:700px;margin:0 auto}
+.mini-bezel{position:relative;background:var(--ink);border:var(--border);border-radius:24px;padding:11px;box-shadow:var(--shadow)}
+.mini-bezel canvas{width:100%;height:auto;display:block;border-radius:14px;background:#0B1428}
+.mini-led{position:absolute;right:22px;bottom:16px;width:9px;height:9px;border-radius:50%;background:var(--grass);box-shadow:0 0 8px var(--grass)}
+.mini-stand{width:130px;height:15px;background:var(--ink);margin:0 auto;border-radius:0 0 14px 14px}
+.mini-wrap .game-note{margin-top:12px;background:rgba(255,248,236,.88);border-radius:12px;padding:4px 10px}
+.age-group{margin-top:38px}
+.age-title{display:flex;align-items:center;gap:12px;font-weight:900;font-size:1.3rem}
+.age-title .tag{display:inline-block;font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:.3em .85em;border:2px solid var(--ink)}
+.age-title .line{flex:1;height:3px;background:var(--ink);border-radius:2px;opacity:.14}
+.game-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:14px;margin-top:16px}
+.gcard{text-align:left;background:#fff;border:var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);padding:16px 18px;cursor:pointer;font-family:var(--font);color:var(--ink);transition:transform .13s,background .13s;display:block;width:100%}
+.gcard:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink)}
+.gcard h4{font-size:1.06rem;margin-bottom:3px}
+.gcard p{color:var(--ink-soft);font-size:.93rem;font-weight:600;line-height:1.45}
+.gcard.on{background:var(--sun)}
+@media(max-width:520px){.mini-wrap{top:70px}.game-cards{grid-template-columns:1fr 1fr;gap:10px}.gcard{padding:12px 13px}.gcard p{font-size:.85rem}}
+
 /* learn shelf */
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .chip{display:inline-flex;align-items:center;gap:.45em;background:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:.42em 1em;font-weight:700;font-size:.95rem;box-shadow:3px 3px 0 var(--ink);transition:transform .15s}
@@ -309,8 +330,17 @@ section .wrap{position:relative;z-index:2}
       <canvas class="webgl" id="deskCanvas" aria-label="A family computer with YoyliOS games playing on the screen"></canvas>
       <div class="fallback"><img src="https://yoyli.com/img/g/store-en-1400.webp" alt="Yoyli Games storefront"></div>
     </div>
-    <div class="picker" id="gamePicker"></div>
-    <p class="game-note" id="gameNote"></p>
+    <div class="explorer" id="explorer">
+      <div class="mini-wrap">
+        <div class="mini-bezel">
+          <canvas id="miniScreen" width="1024" height="576" aria-label="The game now playing, live"></canvas>
+          <span class="mini-led"></span>
+        </div>
+        <div class="mini-stand"></div>
+        <p class="game-note" id="gameNote"></p>
+      </div>
+      <div id="ageGroups"></div>
+    </div>
 
     <div class="rv">
       <h3 style="margin-top:44px;font-size:1.35rem">Yoyli Learn — 16 more games for school skills</h3>
@@ -541,28 +571,46 @@ const IMG = s => "https://yoyli.com/img/g/" + s + ".webp";
 /* learn chips */
 document.getElementById("learnChips").innerHTML = LEARN.map(n => `<span class="chip"><i></i>${n}</span>`).join("");
 
-/* game picker */
+/* game explorer: age-grouped cards; the sticky monitor above always shows the game */
 const note = document.getElementById("gameNote");
-const picker = document.getElementById("gamePicker");
-const btns = [];
-GAMES.forEach((g, i) => {
-  if (i === 0 || i === 4) {
-    const s = document.createElement("span");
-    s.className = "age"; s.textContent = i === 0 ? "Ages 2–4" : "Ages 5+";
-    picker.appendChild(s);
-  }
-  const b = document.createElement("button");
-  b.type = "button"; b.textContent = g.n;
-  b.addEventListener("click", () => { if (window.__deskGoTo) window.__deskGoTo(i); syncPicker(i); });
-  picker.appendChild(b); btns.push(b);
+const groupsHost = document.getElementById("ageGroups");
+const cards = [];
+[["2–4", "First games · no reading, no losing", "#E3F2FD", 0, 4], ["5+", "Real games · math, letters, code and quests", "#FFF1D6", 4, 10]].forEach(([age, sub, color, from, to]) => {
+  const wrap = document.createElement("div");
+  wrap.className = "age-group rv";
+  wrap.innerHTML = `<div class="age-title"><span class="tag" style="background:${color}">Ages ${age}</span> ${sub} <span class="line"></span></div>`;
+  const grid = document.createElement("div");
+  grid.className = "game-cards";
+  GAMES.slice(from, to).forEach((g, k) => {
+    const i = from + k;
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "gcard";
+    b.innerHTML = `<h4>${g.n}</h4><p>${g.d}</p>`;
+    b.addEventListener("click", () => { if (window.__deskGoTo) window.__deskGoTo(i); syncPicker(i); });
+    grid.appendChild(b); cards.push(b);
+  });
+  wrap.appendChild(grid);
+  groupsHost.appendChild(wrap);
 });
 function syncPicker(i){
-  btns.forEach((b, j) => b.classList.toggle("on", j === i));
+  cards.forEach((b, j) => b.classList.toggle("on", j === i));
   const g = GAMES[i];
   note.innerHTML = `Now playing: <b>${g.n}</b> · Ages ${g.age} — ${g.d}`;
 }
 syncPicker(4);
 window.__syncPicker = syncPicker;
+
+/* the sticky mini monitor mirrors the desk screen, live */
+(() => {
+  const mini = document.getElementById("miniScreen");
+  const mx = mini.getContext("2d");
+  let miniVis = false;
+  new IntersectionObserver(es => es.forEach(e => miniVis = e.isIntersecting), {threshold: .05}).observe(mini);
+  (function feed() {
+    requestAnimationFrame(feed);
+    if (miniVis && window.__deskScreenCanvas) mx.drawImage(window.__deskScreenCanvas, 0, 0, 1024, 576);
+  })();
+})();
 
 /* scroll progress */
 (() => {
@@ -947,6 +995,7 @@ async function initDesk() {
     sx.fillStyle = "#fff"; sx.font = "700 22px Rubik, sans-serif"; sx.textAlign = "left"; sx.fillText("LIVE · Yoyli Games", 58, 50);
   }
   const screenTex = new THREE.CanvasTexture(sc); screenTex.colorSpace = THREE.SRGBColorSpace; screenTex.anisotropy = 4;
+  window.__deskScreenCanvas = sc;
 
   /* monitor — slim bezel, curved stand arm */
   const mon = new THREE.Group(); mon.position.set(-.85, deskTopY, -.55); grp.add(mon);
