@@ -68,6 +68,9 @@ header.site .btn{min-height:46px;padding:.45em 1.1em;font-size:.98rem;margin-lef
   .logo{gap:8px}
 }
 .soon-badge{position:absolute;top:14px;right:14px;z-index:3;background:var(--sun);border:var(--border);border-radius:999px;font-weight:900;font-size:.8rem;letter-spacing:.1em;padding:.45em 1em;box-shadow:var(--shadow-sm);transform:rotate(2.5deg)}
+.android-stamp{position:absolute;top:10px;left:12px;z-index:3;width:104px;height:104px;transform:rotate(-9deg);filter:drop-shadow(3px 3px 0 rgba(28,43,74,.85))}
+.android-stamp svg{width:100%;height:100%;display:block}
+@media(max-width:520px){.android-stamp{width:82px;height:82px}}
 .stage.tall canvas.webgl{aspect-ratio:16/11}
 @media(max-width:700px){.stage.tall canvas.webgl{aspect-ratio:1/1.02}}
 /* ============ HERO ============ */
@@ -361,12 +364,28 @@ section .wrap{position:relative;z-index:2}
     <div class="sec-head center rv">
       <span class="eyebrow">Coming soon · YoyliOS Launcher</span>
       <h2>Next: the YoyliOS Launcher for tablet &amp; phone</h2>
-      <p class="lede" style="margin:0 auto">YoyliOS the system lives on your PC. Coming next is the <b>YoyliOS Launcher</b> — an Android launcher that brings the same world to the tablet and phone your kids already hold: their own profile, their own home screen, the same parent rules. Not an operating system — a launcher, and it's on its way.</p>
+      <p class="lede" style="margin:0 auto">YoyliOS the system lives on your PC. Coming next is the <b>YoyliOS Launcher</b> — an Android launcher that brings the same world to the tablet and phone your kids already hold: their own profile, their own home screen, the same parent rules. Not an operating system — a launcher, and it's on its way. <b>Android only at launch.</b></p>
     </div>
     <div class="stage rv tall" id="devicesStage">
       <canvas class="webgl" id="devicesCanvas" aria-label="A tablet and a smartphone showing the upcoming YoyliOS Launcher"></canvas>
       <div class="fallback"><img src="https://yoyli.com/img/s/animals.webp" alt="Little Play activities for ages 2 to 4"></div>
       <div class="soon-badge">COMING SOON · LAUNCHER</div>
+      <div class="android-stamp" role="img" aria-label="Android only">
+        <svg viewBox="0 0 120 120">
+          <defs><path id="stampArc" d="M60 14 a46 46 0 1 1 -0.01 0"/></defs>
+          <circle cx="60" cy="60" r="57" fill="#FFFFFF"/>
+          <circle cx="60" cy="60" r="57" fill="none" stroke="#3A9E63" stroke-width="3.5"/>
+          <circle cx="60" cy="60" r="44" fill="none" stroke="#3A9E63" stroke-width="1.6" stroke-dasharray="4 4"/>
+          <text font-family="Rubik, sans-serif" font-weight="800" font-size="12.5" letter-spacing="2.5" fill="#2E7D4F"><textPath href="#stampArc" startOffset="2%">ANDROID ONLY · ANDROID ONLY ·</textPath></text>
+          <g fill="#3DDC84" stroke="#2E7D4F" stroke-width="2.4">
+            <path d="M38 66 a22 22 0 0 1 44 0 z"/>
+            <line x1="45" y1="47" x2="39" y2="37" stroke-linecap="round"/>
+            <line x1="75" y1="47" x2="81" y2="37" stroke-linecap="round"/>
+          </g>
+          <circle cx="51" cy="57" r="3" fill="#fff"/><circle cx="69" cy="57" r="3" fill="#fff"/>
+          <text x="60" y="88" text-anchor="middle" font-family="Rubik, sans-serif" font-weight="900" font-size="13" fill="#2E7D4F">ANDROID</text>
+        </svg>
+      </div>
     </div>
     <p class="game-note rv">A first look at the launcher: on the tablet, the <b>Yoyli home screen</b> and <b>Little Play</b> (ages 2–4). On the phone, <b>"Who's playing?"</b> — every kid taps their own face and lands in their own world.</p>
   </div>
